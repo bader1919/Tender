@@ -3,26 +3,6 @@
   "nodes": [
     {
       "parameters": {
-        "promptType": "define",
-        "text": "=Time for update: {{ $now }}\n\nDate of Email: {{ $json.timestamp }}\n\nTender #: {{ $json.tenderNumber }} \n\nIssued By : {{ $json.issuedBy }} / {{ $json.internalExternal }}\n\nContact: {{ $json.tenderBoardContact }}\n\nTitle: {{ $json.tenderTitle }} \n\nRef:{{ $json.paRefNumber }}\n\nPublish Date: {{ $json.publishDate }}\n\nSales Start: {{ $json.salesStart }}\n\nNo. Of Days Remaning to Close: {{ $json.daysRemaining }}\n\nBid Closing: {{ $json.closingDate }}\n\nPurchase Doc before : {{ $json.purchaseBefore }}\n\nis Alternate Bid Allowed: {{ $json.isAlternateBidAllowed }}\n\nInitial Bond: {{ $json.initialBond }}\n\nTender Fees: {{ $json.tenderFees }}\n\nContract Duration: {{ $json.contractDuration }}\n\nBid Validity : {{ $json.bidValidity }}\n\nTender Descrption: \n\n{{ $json.tenderDescription }}\n\n\n\nEmail Subject:{{ $json.subject }}\n\nEmail Body:\n\n{{ $json.emailBody }}\n\n\n\nTendering URL: \n\n{{ $json.tenderUrl }}",
-        "options": {
-          "systemMessage": "=Role:\nYou are a senior procurement analyst specializing in Bahraini government tenders. Your task is to analyze tender announcements, extract key strategic details, and generate a Telegram-optimized summary for a CEO who decides in under 10 seconds.\n\nInput:\nYou will receive a structured JSON tender announcement containing:\n\nTender metadata (number, dates, fees, bonds).\nScope, eligibility, and official links.\nAdditional context (if available): Past bid history, competitor activity, or strategic relevance.\nYour Task:\nExtract and Simplify:\n\nTender Number: Use <code> tags for visibility.\nTitle: Shorten to ≤5 words (prioritize technology, capacity, or duration).\nDates: Extract only the date (no time) for Sales Start and Bid Closing.\nScope: Condense to 1 bullet point using + notation (e.g., \"design + build\").\nEligibility: Highlight minimums (e.g., \"Local GCC, SME 10% preference\").\nLink: Direct URL to the tender.\nStrategic Enhancements:\n\nIf the tender involves critical infrastructure (e.g., oil/gas, IT, healthcare), prepend an emoji to the title:\n🛢️ (Oil/Gas), 💻 (IT), ⚕️ (Healthcare), ⚡ (Energy).\nIf the bid deadline is ≤5 days, bold and underline it:\n<u><b>Bid Submission Closing Date: 2025-10-21</b></u>.\nIf SME preference ≥10%, add (SME Boost) to eligibility.\nOutput Format (Strict HTML):\n\n<b>Today's Tenders: [X]</b>\n\n<b>Tender Number:</b> <code>[Tender #]</code>\n<b>Title:</b> [Emoji] [Simplified Title]\n<i>Date of Email:</i> [YYYY-MM-DD]\n<i>Sales Start:</i> [YYYY-MM-DD]\n[u][b]Bid Submission Closing Date: [YYYY-MM-DD][/b][/u]\n\n• <b>Key Scope:</b> [1-line condensed scope]\n• <b>Key Eligibility:</b> [1-line distilled criteria]\n\n[u][Tender Board Link][/u]\nExamples of Optimized Outputs:\nExample 1: Urgent Oil/Gas Tender\n\n<b>Today's Tenders: 1</b>\n\n<b>Tender Number:</b> <code>90/2025/TWR</code>\n<b>Title:</b> 🛢️ Rotork Valve Actuators (1Yr)\n<i>Date of Email:</i> 2025-10-15\n<i>Sales Start:</i> 2025-10-09\n<u><b>Bid Submission Closing Date: 2025-10-21</b></u>\n\n• <b>Key Scope:</b> Supply + maintain OEM valve actuators (BAPCO gas network)\n• <b>Key Eligibility:</b> Local GCC, SMEs (10% boost)\n\n<u>https://www.tenderboard.gov.bh/TenderDetails/?id=90%2F2025%2FTWR</u>\nExample 2: IT Infrastructure Tender\n\n<b>Today's Tenders: 1</b>\n\n<b>Tender Number:</b> <code>91/2025/IT</code>\n<b>Title:</b> 💻 Govt Cloud Migration (3Yr)\n<i>Date of Email:</i> 2025-10-16\n<i>Sales Start:</i> 2025-10-10\n<u>Bid Submission Closing Date: 2025-11-05</u>\n\n• <b>Key Scope:</b> Design + deploy hybrid cloud (Ministry of Interior)\n• <b>Key Eligibility:</b> Tier-3 data centers, 5+ years exp\n\n<u>https://www.tenderboard.gov.bh/TenderDetails/?id=91%2F2025%2FIT</u>"
-        }
-      },
-      "type": "@n8n/n8n-nodes-langchain.agent",
-      "typeVersion": 2.2,
-      "position": [
-        -4848,
-        1264
-      ],
-      "id": "8c2ab97f-844d-433e-911f-abafd605c88d",
-      "name": "AI Agent",
-      "alwaysOutputData": false,
-      "retryOnFail": true,
-      "disabled": true
-    },
-    {
-      "parameters": {
         "chatId": "=6390929640",
         "text": "={{ $json.output }} || {{ $json.message }}",
         "additionalFields": {
@@ -33,8 +13,8 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        -944,
-        1760
+        -1696,
+        1520
       ],
       "id": "28c0e43a-3280-4e1e-814a-28e43b26b1e0",
       "name": "Send a text message",
@@ -45,20 +25,6 @@
           "name": "Telegram account"
         }
       }
-    },
-    {
-      "parameters": {
-        "jsCode": "const body = $json.text || \"\";\n\nconst tenderNumberMatch = body.match(/Tender Number\\s*:\\s*(.+)/i);\nconst tenderTitleMatch = body.match(/Tender Title\\s*:\\s*(.+)/i);\nconst salesStartMatch = body.match(/Sales Starts On\\s*(\\d{2}-[A-Z]{3}-\\d{4}\\s\\d{2}:\\d{2}:\\d{2})/i);\nconst submissionDeadlineMatch = body.match(/Closing On\\s*(\\d{2}-[A-Z]{3}-\\d{4}\\s\\d{2}:\\d{2}:\\d{2})/i);\nconst urlMatch = body.match(/https?:\\/\\/[^\\s]+/i);\n\nconst tenderNumber = tenderNumberMatch?.[1]?.trim() || null;\n\nconst tenderUrl = tenderNumber\n  ? `https://www.tenderboard.gov.bh/TenderDetails/?id=${encodeURIComponent(tenderNumber)}`\n  : null;\n\nreturn [\n  {\n    json: {\n      tenderNumber,\n      tenderTitle: tenderTitleMatch?.[1]?.trim() || null,\n      salesStart: salesStartMatch?.[1]?.trim() || null,\n      submissionDeadline: submissionDeadlineMatch?.[1]?.trim() || null,\n      originalUrl: urlMatch?.[0]?.trim() || null,\n      tenderUrl,\n      rawBody: body,\n    },\n  },\n];\n"
-      },
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        -4624,
-        736
-      ],
-      "id": "3ac4910e-0e66-4279-8642-7ddec3a47317",
-      "name": "Code1",
-      "disabled": true
     },
     {
       "parameters": {
@@ -73,8 +39,8 @@
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
       "position": [
-        -1808,
-        1712
+        -2592,
+        1520
       ],
       "id": "da450bc7-c673-4786-b344-c4ef9a27039a",
       "name": "Schedule Trigger"
@@ -98,334 +64,6 @@
     },
     {
       "parameters": {
-        "modelName": "models/gemini-2.5-flash-lite",
-        "options": {}
-      },
-      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
-      "typeVersion": 1,
-      "position": [
-        -4848,
-        1488
-      ],
-      "id": "f2467169-fff0-4e38-8ea5-51c23314939e",
-      "name": "Google Gemini Chat Model",
-      "credentials": {
-        "googlePalmApi": {
-          "id": "aNAPe1lB3CYiZ1LV",
-          "name": "Google Gemini(PaLM) Api account"
-        }
-      },
-      "disabled": true
-    },
-    {
-      "parameters": {
-        "pollTimes": {
-          "item": [
-            {
-              "mode": "everyMinute"
-            }
-          ]
-        },
-        "simple": false,
-        "filters": {
-          "sender": "Notifications@tenderboard.gov.bh"
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.gmailTrigger",
-      "typeVersion": 1.3,
-      "position": [
-        -5072,
-        832
-      ],
-      "id": "828180f9-9621-44d2-99ce-23e162225113",
-      "name": "Gmail Trigger",
-      "credentials": {
-        "gmailOAuth2": {
-          "id": "Qjg1ivaz4rQ65Kd4",
-          "name": "Gmail account 2"
-        }
-      },
-      "disabled": true
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "strict",
-            "version": 2
-          },
-          "conditions": [
-            {
-              "id": "720edac2-c5b6-4709-8163-49186b76b52d",
-              "leftValue": "={{ $json.timestamp }}",
-              "rightValue": "={{ $now.minus(7, 'days') }}",
-              "operator": {
-                "type": "dateTime",
-                "operation": "afterOrEquals"
-              }
-            },
-            {
-              "id": "28a56417-908e-4132-a8b1-1f2b5cf9862c",
-              "leftValue": "",
-              "rightValue": "",
-              "operator": {
-                "type": "string",
-                "operation": "equals",
-                "name": "filter.operator.equals"
-              }
-            }
-          ],
-          "combinator": "and"
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.filter",
-      "typeVersion": 2.2,
-      "position": [
-        -5072,
-        1264
-      ],
-      "id": "7396a277-6070-4268-82f5-99a909d4929b",
-      "name": "Filter",
-      "disabled": true
-    },
-    {
-      "parameters": {
-        "url": "={{ $json.tenderUrl }}",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "User-Agent",
-              "value": "Mozilla/5.0 (iPad; CPU OS 18_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.6 Mobile/15E148 Safari/604.1"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [
-        -4400,
-        736
-      ],
-      "id": "c62a29af-f09a-4956-879d-c77624b1aeeb",
-      "name": "HTTP Request1",
-      "disabled": true
-    },
-    {
-      "parameters": {
-        "operation": "extractHtmlContent",
-        "extractionValues": {
-          "values": [
-            {
-              "key": "data",
-              "cssSelector": "body",
-              "skipSelectors": "link"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.html",
-      "typeVersion": 1.2,
-      "position": [
-        -4176,
-        736
-      ],
-      "id": "bc979f13-8a22-4497-937b-eb8ef02e016c",
-      "name": "HTML",
-      "disabled": true
-    },
-    {
-      "parameters": {
-        "assignments": {
-          "assignments": [
-            {
-              "id": "cd5e5ab1-2cbc-4cdb-8583-e2bd80e6e07b",
-              "name": "tenderDetails",
-              "value": "={{ $json.tenderDetails }}",
-              "type": "string"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.set",
-      "typeVersion": 3.4,
-      "position": [
-        -3728,
-        736
-      ],
-      "id": "621e82da-8f0b-4337-9edd-e8772d52cf7a",
-      "name": "Edit Fields",
-      "disabled": true
-    },
-    {
-      "parameters": {
-        "jsCode": "return items.map((item, index) => {\n  // Get HTML from HTTP Request\n  let html = \"\";\n  if (typeof item.json === 'string') {\n    html = item.json;\n  } else if (item.json?.data) {\n    html = item.json.data;\n  } else if (item.binary?.data) {\n    html = item.binary.data.toString('utf-8');\n  }\n  \n  // Get previous node data (email data)\n  const allItems = $('Webhook').all();  // Change 'Webhook' to your first node name\n  const previousData = allItems[index]?.json || {};\n  \n  // Clean HTML\n  const cleanHtml = html\n    .replace(/<script\\b[^<]*(?:(?!<\\/script>)<[^<]*)*<\\/script>/gi, '')\n    .replace(/<style\\b[^<]*(?:(?!<\\/style>)<[^<]*)*<\\/style>/gi, '');\n  \n  // Extract full tender details section (everything between TENDER DETAILS and Download/Contact)\n  const detailsMatch = cleanHtml.match(/TENDER\\s+DESCRIPTION([\\s\\S]*?)(?:CONTACT\\s+INFORMATION|Download|$)/i);\n  const fullTenderDetails = detailsMatch \n    ? detailsMatch[1]\n        .replace(/<[^>]*>/g, ' ')\n        .replace(/&nbsp;/g, ' ')\n        .replace(/&amp;/g, '&')\n        .replace(/\\s+/g, ' ')\n        .trim()\n    : \"\";\n  \n  // Extract tender number from scraped page\n  const pageTenderNumberMatch = cleanHtml.match(/Tender\\s+Number\\s*:?\\s*([^\\n<]+?)(?:\\s*PA Ref|<)/i);\n  const pageTenderNumber = pageTenderNumberMatch \n    ? pageTenderNumberMatch[1].replace(/<[^>]*>/g, '').trim() \n    : null;\n  \n  // Extract tender title from scraped page\n  const pageTenderTitleMatch = cleanHtml.match(/<h4[^>]*class=\"TenderSub\"[^>]*>([^<]+)<\\/h4>/i);\n  const pageTenderTitle = pageTenderTitleMatch \n    ? pageTenderTitleMatch[1].replace(/<[^>]*>/g, '').trim() \n    : null;\n  \n  // Use scraped data if available, fallback to email data\n  const tenderNumber = pageTenderNumber || previousData.tenderNumber || null;\n  const tenderTitle = pageTenderTitle || previousData.tenderTitle || null;\n  \n  // Build tender URL\n  const tenderUrl = tenderNumber\n    ? `https://www.tenderboard.gov.bh/TenderDetails/?id=${encodeURIComponent(tenderNumber)}`\n    : null;\n  \n  return {\n    json: {\n      fullTenderDetails: fullTenderDetails,\n\n    }\n  };\n});"
-      },
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        -3952,
-        736
-      ],
-      "id": "92ea59b7-5cac-4831-8ce7-71c4bbea21bf",
-      "name": "Code",
-      "disabled": true
-    },
-    {
-      "parameters": {
-        "sessionIdType": "customKey",
-        "sessionKey": "={{ $('Filter').item.json.timestamp }}",
-        "contextWindowLength": 60
-      },
-      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
-      "typeVersion": 1.3,
-      "position": [
-        -4720,
-        1488
-      ],
-      "id": "7515410d-96aa-46f7-b659-da53ced85281",
-      "name": "Simple Memory",
-      "disabled": true
-    },
-    {
-      "parameters": {
-        "dataTableId": {
-          "__rl": true,
-          "value": "YKhwjZuwZhr0xacU",
-          "mode": "list",
-          "cachedResultName": "test html",
-          "cachedResultUrl": "/projects/c0aq91RJJOOMojVP/datatables/YKhwjZuwZhr0xacU"
-        },
-        "columns": {
-          "mappingMode": "defineBelow",
-          "value": {
-            "DateofEmail": "={{ $json['Date of Email'] }}",
-            "TenderID": "={{ $json['Tender #'] }}",
-            "Title": "={{ $json.Title }}",
-            "SalesStartDate": "={{ $json['Sales Start Date'] }}",
-            "BidSubmissionCloseing": "={{ $json['Bid Submission Closeing'] }}",
-            "TenderURLPage": "={{ $json['Tender URL Page'] }}",
-            "TenderDetails": "={{ $json['Tender Details'] }}",
-            "TenderSystemURL": "={{ $json['Tender System URL'] }}",
-            "EmailBody": "={{ $json['Email Body '] }}"
-          },
-          "matchingColumns": [],
-          "schema": [
-            {
-              "id": "DateofEmail",
-              "displayName": "DateofEmail",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "dateTime",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "TenderID",
-              "displayName": "TenderID",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "Title",
-              "displayName": "Title",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "SalesStartDate",
-              "displayName": "SalesStartDate",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "dateTime",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "BidSubmissionCloseing",
-              "displayName": "BidSubmissionCloseing",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "dateTime",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "TenderURLPage",
-              "displayName": "TenderURLPage",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "TenderDetails",
-              "displayName": "TenderDetails",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "TenderSystemURL",
-              "displayName": "TenderSystemURL",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "EmailBody",
-              "displayName": "EmailBody",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            }
-          ],
-          "attemptToConvertTypes": false,
-          "convertFieldsToString": false
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.dataTable",
-      "typeVersion": 1,
-      "position": [
-        -3504,
-        736
-      ],
-      "id": "570454e7-5082-4d38-b114-c51c478b1fd5",
-      "name": "Insert row1",
-      "disabled": true
-    },
-    {
-      "parameters": {
         "operation": "get",
         "dataTableId": {
           "__rl": true,
@@ -439,604 +77,11 @@
       "type": "n8n-nodes-base.dataTable",
       "typeVersion": 1,
       "position": [
-        -1584,
-        1712
+        -2368,
+        1520
       ],
       "id": "1f31c9a5-6212-4bb3-9cf9-5f32dd0a68b6",
       "name": "Get row(s)"
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "strict",
-            "version": 2
-          },
-          "conditions": [
-            {
-              "id": "21cd6388-19f0-48c3-94b3-f7846c6641c3",
-              "leftValue": "={{ $json.body.fromAddress }}",
-              "rightValue": "=Notifications@tenderboard.gov.bh",
-              "operator": {
-                "type": "string",
-                "operation": "contains"
-              }
-            },
-            {
-              "id": "8ccb0dd8-375b-4d52-b261-341f6e675cc5",
-              "leftValue": "",
-              "rightValue": "",
-              "operator": {
-                "type": "string",
-                "operation": "equals",
-                "name": "filter.operator.equals"
-              }
-            }
-          ],
-          "combinator": "or"
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2.2,
-      "position": [
-        -4848,
-        832
-      ],
-      "id": "3d155633-348b-4187-bad9-80b8be33a06d",
-      "name": "If1",
-      "disabled": true
-    },
-    {
-      "parameters": {
-        "dataTableId": {
-          "__rl": true,
-          "value": "bL1bPNIlkvbP0DoE",
-          "mode": "list",
-          "cachedResultName": "All Emails",
-          "cachedResultUrl": "/projects/c0aq91RJJOOMojVP/datatables/bL1bPNIlkvbP0DoE"
-        },
-        "columns": {
-          "mappingMode": "defineBelow",
-          "value": {
-            "Timestamp": "={{ $now }}"
-          },
-          "matchingColumns": [],
-          "schema": [
-            {
-              "id": "Timestamp",
-              "displayName": "Timestamp",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "dateTime",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "EmailAddress",
-              "displayName": "EmailAddress",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "EmailBody",
-              "displayName": "EmailBody",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            }
-          ],
-          "attemptToConvertTypes": false,
-          "convertFieldsToString": false
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.dataTable",
-      "typeVersion": 1,
-      "position": [
-        -4624,
-        928
-      ],
-      "id": "7e836b62-bb90-4682-9f5f-c2ec2897c4a6",
-      "name": "Insert row2",
-      "disabled": true
-    },
-    {
-      "parameters": {
-        "operation": "extractHtmlContent",
-        "extractionValues": {
-          "values": [
-            {
-              "key": "data",
-              "cssSelector": "body",
-              "skipSelectors": "link"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.html",
-      "typeVersion": 1.2,
-      "position": [
-        -5072,
-        2032
-      ],
-      "id": "401ddff3-6c55-4e1a-9b5c-048f1aff5f2a",
-      "name": "HTML1",
-      "disabled": true
-    },
-    {
-      "parameters": {
-        "jsCode": "return items.map((item, index) => {\n  // Get HTML from HTTP Request\n  let html = \"\";\n  if (typeof item.json === 'string') {\n    html = item.json;\n  } else if (item.json?.data) {\n    html = item.json.data;\n  } else if (item.binary?.data) {\n    html = item.binary.data.toString('utf-8');\n  }\n  \n  // Get email data from previous Code2 node\n  const allItems = $('Code2').all();\n  const emailData = allItems[index]?.json || {};\n  \n  // Clean HTML\n  const cleanHtml = html\n    .replace(/<script\\b[^<]*(?:(?!<\\/script>)<[^<]*)*<\\/script>/gi, '')\n    .replace(/<style\\b[^<]*(?:(?!<\\/style>)<[^<]*)*<\\/style>/gi, '');\n  \n  // Helper to clean text\n  const cleanText = (text) => {\n    if (!text) return null;\n    return text\n      .replace(/<[^>]*>/g, ' ')\n      .replace(/&nbsp;/g, ' ')\n      .replace(/&amp;/g, '&')\n      .replace(/&lt;/g, '<')\n      .replace(/&gt;/g, '>')\n      .replace(/&quot;/g, '\"')\n      .replace(/\\s+/g, ' ')\n      .trim()\n      .replace(/\\s*<[^>]*$/, '');\n  };\n  \n  // Extract tender details section\n  const detailsMatch = cleanHtml.match(/TENDER\\s+DESCRIPTION([\\s\\S]*?)(?:CONTACT\\s+INFORMATION|$)/i);\n  const fullTenderDetails = detailsMatch ? cleanText(detailsMatch[1]) : \"\";\n  \n  // ==================================================\n  // PARSE FROM fullTenderDetails\n  // ==================================================\n  \n  // PA Ref Number / Tender Reference\n  const paRefMatch = fullTenderDetails.match(/(?:Tender Reference|PA Ref Number)\\s*:?\\s*([A-Z0-9\\/-]+)/i);\n  const paRefNumber = paRefMatch ? paRefMatch[1].trim() : null;\n  \n  // Issued By\n  const issuedByMatch = fullTenderDetails.match(/Issued by\\s+([^I]+?)(?=\\s+Internal\\/External|$)/i);\n  const issuedBy = issuedByMatch ? issuedByMatch[1].trim() : null;\n  \n  // Initial Bond\n  const initialBondMatch = fullTenderDetails.match(/Initial Bond\\s+(BD\\s*[\\d,]+)/i);\n  const initialBond = initialBondMatch ? initialBondMatch[1].trim() : null;\n  \n  // Tender Fees\n  const tenderFeesMatch = fullTenderDetails.match(/Tender Fees\\s+(BD\\s*[\\d,]+)/i);\n  const tenderFees = tenderFeesMatch ? tenderFeesMatch[1].trim() : null;\n  \n  // Contract Duration\n  const contractDurationMatch = fullTenderDetails.match(/Contract Duration\\s+(\\d+\\s+(?:Year|Month|Day)s?)/i);\n  const contractDuration = contractDurationMatch ? contractDurationMatch[1].trim() : null;\n  \n  // Bid Validity\n  const bidValidityMatch = fullTenderDetails.match(/Bid Validity[^0-9]*(\\d+\\s+days)/i);\n  const bidValidity = bidValidityMatch ? bidValidityMatch[1].trim() : null;\n  \n  // Invitation Method\n  const invitationMethodMatch = fullTenderDetails.match(/Invitation Method\\s+([^\\n]+?)(?=\\s+Classification|$)/i);\n  const invitationMethod = invitationMethodMatch ? invitationMethodMatch[1].trim() : null;\n  \n  // Internal/External\n  const internalExternalMatch = fullTenderDetails.match(/Internal\\/External\\s+(Internal|External)/i);\n  const internalExternal = internalExternalMatch ? internalExternalMatch[1].trim() : null;\n  \n  // Classification/CPV Codes - FIXED\n  const classificationMatch = fullTenderDetails.match(/Classification\\/CPV Codes\\s+-->\\s*([^-]+)\\s+-\\s+([^-]+?)\\s+-->/i);\n  const classification = classificationMatch ? `${classificationMatch[1].trim()} - ${classificationMatch[2].trim()}` : null;\n  \n  // Publish Date\n  const publishDateMatch = fullTenderDetails.match(/Publish Date\\s+([A-Z][a-z]+,\\s+\\d{2}\\s+[A-Z][a-z]+\\s+\\d{4})/i);\n  const publishDate = publishDateMatch ? publishDateMatch[1].trim() : null;\n  \n  // Purchase Before\n  const purchaseBeforeMatch = fullTenderDetails.match(/Purchase Before\\s+([A-Z][a-z]+,\\s+\\d{2}\\s+[A-Z][a-z]+\\s+\\d{4})/i);\n  const purchaseBefore = purchaseBeforeMatch ? purchaseBeforeMatch[1].trim() : null;\n  \n  // Opening Date\n  const openingDateMatch = fullTenderDetails.match(/Opening Date\\s+([A-Z][a-z]+,\\s+\\d{2}\\s+[A-Z][a-z]+\\s+\\d{4})/i);\n  const openingDate = openingDateMatch ? openingDateMatch[1].trim() : null;\n  \n  // Closing Date\n  const closingDateMatch = fullTenderDetails.match(/Closing Date\\s+([A-Z][a-z]+,\\s+\\d{2}\\s+[A-Z][a-z]+\\s+\\d{4})/i);\n  const closingDateFromPage = closingDateMatch ? closingDateMatch[1].trim() : null;\n  \n  // Mandatory Criteria - FIXED (stop before Arabic)\n  const mandatoryCriteriaMatch = fullTenderDetails.match(/Mandatory Criteria:\\s*(.*?)(?=\\s*,\\s*[إمرجعنوصف]|Download|$)/i);\n  const mandatoryCriteria = mandatoryCriteriaMatch ? mandatoryCriteriaMatch[1].trim() : null;\n  \n  // Tender Description - FIXED (stop before Mandatory or Arabic)\n  const tenderDescMatch = fullTenderDetails.match(/Tender Description:\\s*(.*?)(?=\\s*Mandatory Criteria|,\\s*[إمرجعنوصف]|Download|$)/i);\n  const tenderDescription = tenderDescMatch ? tenderDescMatch[1].trim() : null;\n  \n  // Is Alternate Bid Allowed\n  const isAlternateBidAllowed = /Is Alternate Bid Allowed\\s+Yes/i.test(fullTenderDetails) ? 'Yes' : \n                                 /Is Alternate Bid Allowed\\s+No/i.test(fullTenderDetails) ? 'No' : null;\n  \n  // ==================================================\n  // PDF DETECTION - IMPROVED\n  // ==================================================\n  let pdfAvailable = false;\n  let pdfDirectLink = null;\n  \n  // Check for dynamic download button\n  if (html.includes('lnkBtnDwnld') || html.includes('fa-download')) {\n    pdfAvailable = true;\n  }\n  \n  // Try to find direct PDF links (if any)\n  const ignorePdfs = ['Vision2030', 'guide', 'help', 'faq', 'terms'];\n  const pdfMatch = html.match(/href=[\"']([^\"']*\\.pdf[^\"']*)[\"']/i);\n  \n  if (pdfMatch && !ignorePdfs.some(ignore => pdfMatch[1].toLowerCase().includes(ignore.toLowerCase()))) {\n    pdfDirectLink = pdfMatch[1];\n    if (!pdfDirectLink.startsWith('http')) {\n      pdfDirectLink = pdfDirectLink.startsWith('/') \n        ? `https://www.tenderboard.gov.bh${pdfDirectLink}`\n        : `https://www.tenderboard.gov.bh/${pdfDirectLink}`;\n    }\n    pdfAvailable = true;\n  }\n  \n  // ==================================================\n  // CONTACT INFO EXTRACTION\n  // ==================================================\n  \n  // Agency Contact (before \"Bahrain Tender Board\" section)\n  const agencyContactMatch = fullTenderDetails.match(/For further inquiries please contact on:\\s*([^\\n]+?)\\s*(\\d{8})/i);\n  const agencyContactName = agencyContactMatch ? agencyContactMatch[1].trim() : issuedBy;\n  const agencyContactPhone = agencyContactMatch ? `+973 ${agencyContactMatch[2].trim()}` : null;\n  \n  // Tender Board contacts\n  const allPhones = fullTenderDetails.match(/\\+?973[\\s\\d]{8,}/g) || [];\n  const tenderBoardPhones = allPhones.filter(p => !agencyContactPhone || !p.includes(agencyContactPhone.replace(/\\D/g, '')));\n  \n  const tenderBoardEmail = fullTenderDetails.match(/([a-z0-9._%+-]+@tenderboard\\.gov\\.bh)/i)?.[1] || null;\n  const poBox = fullTenderDetails.match(/P\\.O\\.\\s*Box\\s+(\\d+)/i)?.[1] || null;\n  \n  // ==================================================\n  // REQUIREMENTS FLAGS\n  // ==================================================\n  const requiresCommercialReg = /Commercial Registration Certificate|valid CR/i.test(fullTenderDetails);\n  const requiresBahranization = /Bahranization Certificate|employment percentages for Bahraini manpower/i.test(fullTenderDetails);\n  const smeEligible = /Small and Medium Enterprises.*10%|SMEs Classification Certificate/i.test(fullTenderDetails);\n  const registrationRequired = /register.*e-tendering system/i.test(fullTenderDetails);\n  \n  // ==================================================\n  // DATE PARSING TO ISO\n  // ==================================================\n  const parseDate = (dateStr) => {\n    if (!dateStr) return null;\n    try {\n      const months = {\n        'JAN': 0, 'FEB': 1, 'MAR': 2, 'APR': 3, 'MAY': 4, 'JUN': 5,\n        'JUL': 6, 'AUG': 7, 'SEP': 8, 'OCT': 9, 'NOV': 10, 'DEC': 11\n      };\n      const parts = dateStr.match(/(\\d{2})-([A-Z]{3})-(\\d{4})\\s+(\\d{2}):(\\d{2}):(\\d{2})/i);\n      if (parts) {\n        const [, day, month, year, hour, minute, second] = parts;\n        const date = new Date(year, months[month.toUpperCase()], day, hour, minute, second);\n        return date.toISOString();\n      }\n    } catch (e) {}\n    return dateStr;\n  };\n  \n  // ==================================================\n  // CALCULATE DAYS REMAINING\n  // ==================================================\n  const getDaysRemaining = (isoDate) => {\n    if (!isoDate) return null;\n    try {\n      const deadline = new Date(isoDate);\n      const today = new Date();\n      return Math.ceil((deadline - today) / (1000 * 60 * 60 * 24));\n    } catch (e) {\n      return null;\n    }\n  };\n  \n  const daysRemaining = getDaysRemaining(parseDate(emailData.closingDate));\n  \n  // ==================================================\n  // RETURN COMPLETE STRUCTURED DATA\n  // ==================================================\n  return {\n    json: {\n      // ===== CORE TENDER INFO =====\n      timestamp: emailData.timestamp || new Date().toISOString(),\n      tenderNumber: emailData.tenderNumber,\n      tenderTitle: emailData.tenderTitle,\n      paRefNumber: paRefNumber,\n      \n      // ===== ISSUING AUTHORITY =====\n      issuedBy: issuedBy,\n      internalExternal: internalExternal,\n      invitationMethod: invitationMethod,\n      \n      // ===== FINANCIAL =====\n      initialBond: initialBond,\n      tenderFees: tenderFees,\n      contractDuration: contractDuration,\n      bidValidity: bidValidity,\n      \n      // ===== DATES (Original Format) =====\n      salesStart: emailData.salesStart,\n      closingDate: emailData.closingDate,\n      publishDate: publishDate,\n      purchaseBefore: purchaseBefore,\n      openingDate: openingDate,\n      closingDateFromPage: closingDateFromPage,\n      \n      // ===== DATES (ISO Format for DB) =====\n      salesStartISO: parseDate(emailData.salesStart),\n      closingDateISO: parseDate(emailData.closingDate),\n      \n      // ===== CALCULATED FIELDS =====\n      daysRemaining: daysRemaining,\n      \n      // ===== CLASSIFICATIONS =====\n      classification: classification,\n      isAlternateBidAllowed: isAlternateBidAllowed,\n      \n      // ===== CONTENT =====\n      fullTenderDetails: fullTenderDetails,\n      tenderDescription: tenderDescription,\n      mandatoryCriteria: mandatoryCriteria,\n      \n      // ===== DOCUMENTS =====\n      pdfAvailable: pdfAvailable,\n      pdfDirectLink: pdfDirectLink,\n      \n      // ===== URLS =====\n      tenderUrl: emailData.tenderUrl,\n      eTenderingUrl: emailData.eTenderingUrl,\n      \n      // ===== CONTACT INFO =====\n      agencyContacName:  agencyContactName,\n       agencyContactPhone: agencyContactPhone,\n      \n      tenderBoardContact: {\n        email: tenderBoardEmail,\n        phones: tenderBoardPhones,\n        poBox: poBox ? `P.O. Box ${poBox}` : null\n      },\n      \n      // ===== REQUIREMENTS =====\n      requiresCommercialReg: requiresCommercialReg,\n      requiresBahranization: requiresBahranization,\n      smeEligible: smeEligible,\n      registrationRequired: registrationRequired,\n      \n      // ===== EMAIL DATA =====\n      emailSubject: emailData.emailSubject,\n      emailBody: emailData.emailBody,\n      \n      // ===== LEGACY FIELDS (for backward compatibility) =====\n      receivedDate: emailData.timestamp,\n      submissionDeadline: emailData.closingDate,\n      originalUrl: emailData.eTenderingUrl,\n      subject: emailData.emailSubject,\n      rawBody: emailData.emailBody\n    }\n  };\n});"
-      },
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        -5072,
-        2256
-      ],
-      "id": "2e6fb984-fbc7-447f-8670-c7995fa1fead",
-      "name": "Code3",
-      "disabled": true
-    },
-    {
-      "parameters": {
-        "dataTableId": {
-          "__rl": true,
-          "value": "6RjEvhb3PzAReJx3",
-          "mode": "list",
-          "cachedResultName": "tender flow no ai",
-          "cachedResultUrl": "/projects/c0aq91RJJOOMojVP/datatables/6RjEvhb3PzAReJx3"
-        },
-        "columns": {
-          "mappingMode": "defineBelow",
-          "value": {
-            "initialBond": "={{ $json.initialBond.split(\"BD \")[1] }}",
-            "tenderFees": "={{ $json.tenderFees.split(\"BD \")[1]}}",
-            "timestamp": "={{ $json.timestamp }}",
-            "smeEligible": "={{ $json.smeEligible }}",
-            "tenderNumber": "={{ $json.tenderNumber }}",
-            "tenderTitle": "={{ $json.tenderTitle }}",
-            "paRefNumber": "={{ $json.paRefNumber }}",
-            "issuedBy": "={{ $json.issuedBy }}",
-            "internalExternal": "={{ $json.internalExternal }}",
-            "invitationMethod": "={{ $json.invitationMethod }}",
-            "contractDuration": "={{ $json.contractDuration }}",
-            "bidValidity": "={{ $json.bidValidity }}",
-            "salesStart": "={{ $json.salesStart }}",
-            "closingDate": "={{ $json.closingDate }}",
-            "publishDate": "={{ $json.publishDate }}",
-            "purchaseBefore": "={{ $json.purchaseBefore }}",
-            "openingDate": "={{ $json.openingDate }}",
-            "closingDateFromPage": "={{ $json.closingDateFromPage }}",
-            "salesStartISO": "={{ $json.salesStartISO }}",
-            "closingDateISO": "={{ $json.closingDateISO }}",
-            "daysRemaining": "={{ $json.daysRemaining }}",
-            "classification": "={{ $json.classification }}",
-            "isAlternateBidAllowed": "={{ $json.isAlternateBidAllowed }}",
-            "fullTenderDetails": "={{ $json.fullTenderDetails }}",
-            "tenderDescription": "={{ $json.tenderDescription }}",
-            "mandatoryCriteria": "={{ $json.mandatoryCriteria }}",
-            "pdfAvailable": "={{ $json.pdfAvailable }}",
-            "pdfDirectLink": "={{ $json.pdfDirectLink }}",
-            "tenderUrl": "={{ $json.tenderUrl }}",
-            "eTenderingUrl": "={{ $json.eTenderingUrl }}",
-            "agencyContactname": "={{ $json.agencyContactName }}",
-            "tenderBoardContact": "={{ $json.agencyContactPhone }}",
-            "requiresCommercialReg": "={{ $json.requiresCommercialReg }}",
-            "requiresBahranization": "={{ $json.requiresBahranization }}",
-            "emailSubject": "={{ $json.emailSubject }}",
-            "emailBody": "={{ $json.emailBody }}",
-            "subject": "={{ $json.subject }}",
-            "rawBody": "={{ $json.rawBody }}"
-          },
-          "matchingColumns": [],
-          "schema": [
-            {
-              "id": "timestamp",
-              "displayName": "timestamp",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "dateTime",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "tenderNumber",
-              "displayName": "tenderNumber",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "tenderTitle",
-              "displayName": "tenderTitle",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "paRefNumber",
-              "displayName": "paRefNumber",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "issuedBy",
-              "displayName": "issuedBy",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "internalExternal",
-              "displayName": "internalExternal",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "invitationMethod",
-              "displayName": "invitationMethod",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "initialBond",
-              "displayName": "initialBond",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "number",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "tenderFees",
-              "displayName": "tenderFees",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "number",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "contractDuration",
-              "displayName": "contractDuration",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "bidValidity",
-              "displayName": "bidValidity",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "salesStart",
-              "displayName": "salesStart",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "dateTime",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "closingDate",
-              "displayName": "closingDate",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "dateTime",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "publishDate",
-              "displayName": "publishDate",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "purchaseBefore",
-              "displayName": "purchaseBefore",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "dateTime",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "openingDate",
-              "displayName": "openingDate",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "dateTime",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "closingDateFromPage",
-              "displayName": "closingDateFromPage",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "dateTime",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "salesStartISO",
-              "displayName": "salesStartISO",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "dateTime",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "closingDateISO",
-              "displayName": "closingDateISO",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "daysRemaining",
-              "displayName": "daysRemaining",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "classification",
-              "displayName": "classification",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "isAlternateBidAllowed",
-              "displayName": "isAlternateBidAllowed",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "fullTenderDetails",
-              "displayName": "fullTenderDetails",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "tenderDescription",
-              "displayName": "tenderDescription",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "mandatoryCriteria",
-              "displayName": "mandatoryCriteria",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "pdfAvailable",
-              "displayName": "pdfAvailable",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "boolean",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "pdfDirectLink",
-              "displayName": "pdfDirectLink",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "tenderUrl",
-              "displayName": "tenderUrl",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "eTenderingUrl",
-              "displayName": "eTenderingUrl",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "agencyContactname",
-              "displayName": "agencyContactname",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "tenderBoardContact",
-              "displayName": "tenderBoardContact",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "requiresCommercialReg",
-              "displayName": "requiresCommercialReg",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "requiresBahranization",
-              "displayName": "requiresBahranization",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "smeEligible",
-              "displayName": "smeEligible",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "boolean",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "emailSubject",
-              "displayName": "emailSubject",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "emailBody",
-              "displayName": "emailBody",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "subject",
-              "displayName": "subject",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "rawBody",
-              "displayName": "rawBody",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            }
-          ],
-          "attemptToConvertTypes": false,
-          "convertFieldsToString": false
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.dataTable",
-      "typeVersion": 1,
-      "position": [
-        -5072,
-        1808
-      ],
-      "id": "6f6990e4-8be1-420f-974e-3b053b3fb9fe",
-      "name": "Insert row3",
-      "disabled": true
     },
     {
       "parameters": {
@@ -1045,770 +90,11 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -1184,
-        1696
+        -1920,
+        1520
       ],
       "id": "8ac8ad56-b8cc-4892-a1a7-d710229eac1f",
       "name": "Code in JavaScript"
-    },
-    {
-      "parameters": {
-        "jsCode": "const tenders = items.map(i => i.json);\nif (!tenders.length) {\n  return [{ json: { message: \"📭 No new tenders today.\" } }];\n}\n\nlet msg = `📊 <b>Daily Tender Brief — ${new Date().toLocaleDateString()}</b>\\n`;\nmsg += `<b>Total Tenders Today:</b> ${tenders.length}\\n\\n`;\n\nfor (const [i, t] of tenders.entries()) {\n  msg += `<b>${i + 1}. ${t.tenderTitle || 'Untitled Tender'}</b>\\n`;\n  msg += `Tender No: <code>${t.tenderNumber}</code>\\n`;\n  msg += `Issued By: ${t.issuedBy || 'N/A'}\\n`;\n  msg += `Closing Date: ${t.closingDate || 'N/A'}\\n`;\n  msg += `Key Scope: ${t.tenderDescription?.slice(0, 80) || 'N/A'}\\n`;\n  msg += `🔗 <a href=\"${t.tenderUrl}\">View Tender</a>\\n\\n`;\n}\n\nreturn [{ json: { message: msg } }];"
-      },
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        -5072,
-        1584
-      ],
-      "id": "95797172-5b67-475f-9c38-c816f3c4fa2f",
-      "name": "Code in JavaScript1",
-      "disabled": true
-    },
-    {
-      "parameters": {
-        "assignments": {
-          "assignments": [
-            {
-              "id": "4c24c6b9-9731-4831-aea2-ce549b0bc1da",
-              "name": "timestamp",
-              "value": "={{ $json.timestamp }}",
-              "type": "string"
-            },
-            {
-              "id": "9ba08a1d-3867-4ee8-9b49-2db42f23d48f",
-              "name": "tenderNumber",
-              "value": "={{ $json.tenderNumber }}",
-              "type": "string"
-            },
-            {
-              "id": "c5f2fd79-dc87-41a6-8dc1-3e9e27b4b732",
-              "name": "tenderTitle",
-              "value": "={{ $json.tenderTitle }}",
-              "type": "string"
-            },
-            {
-              "id": "c81f8319-66a6-4abb-acc4-a4595ec0b1a0",
-              "name": "paRefNumber",
-              "value": "={{ $json.paRefNumber }}",
-              "type": "string"
-            },
-            {
-              "id": "7c9e10a4-5c50-4c15-90b9-e9e68146b4c5",
-              "name": "issuedBy",
-              "value": "={{ $json.issuedBy }}",
-              "type": "string"
-            },
-            {
-              "id": "37758222-487f-47cc-8b18-bf77cfff7372",
-              "name": "internalExternal",
-              "value": "={{ $json.internalExternal }}",
-              "type": "string"
-            },
-            {
-              "id": "d6575f48-dbd3-495d-9bc9-57695b2fe22c",
-              "name": "invitationMethod",
-              "value": "={{ $json.invitationMethod }}",
-              "type": "string"
-            },
-            {
-              "id": "d7ddad7c-595f-4a59-af9e-d253c8d5ee71",
-              "name": "initialBond",
-              "value": "={{ $json.initialBond }}",
-              "type": "string"
-            },
-            {
-              "id": "25f48e5c-bd8c-4931-9a1b-678b58cebc6b",
-              "name": "tenderFees",
-              "value": "={{ $json.tenderFees }}",
-              "type": "string"
-            },
-            {
-              "id": "39f2c3d7-719a-497a-adab-5b5808c763a9",
-              "name": "contractDuration",
-              "value": "={{ $json.contractDuration }}",
-              "type": "string"
-            },
-            {
-              "id": "cb5b4d1e-a919-4b65-8e1e-1cc45eba161d",
-              "name": "bidValidity",
-              "value": "={{ $json.bidValidity }}",
-              "type": "string"
-            },
-            {
-              "id": "1d82bcb1-9b15-4571-9870-648724de5207",
-              "name": "salesStart",
-              "value": "={{ $json.salesStart }}",
-              "type": "string"
-            },
-            {
-              "id": "1b0746db-5447-4424-9ee3-ee3eebf9f098",
-              "name": "closingDate",
-              "value": "={{ $json.closingDate }}",
-              "type": "string"
-            },
-            {
-              "id": "e960a4ee-e8e4-4b5a-952d-89674ca8a8bb",
-              "name": "publishDate",
-              "value": "={{ $json.publishDate }}",
-              "type": "string"
-            },
-            {
-              "id": "b434556f-0518-4a6a-a7ac-49309e4aba44",
-              "name": "purchaseBefore",
-              "value": "={{ $json.purchaseBefore }}",
-              "type": "string"
-            },
-            {
-              "id": "09305444-b777-404c-8110-c8dd53911c61",
-              "name": "openingDate",
-              "value": "={{ $json.openingDate }}",
-              "type": "string"
-            },
-            {
-              "id": "cddcaae6-cfec-48f8-89fc-ccd32a9fd7b0",
-              "name": "closingDateFromPage",
-              "value": "={{ $json.closingDateFromPage }}",
-              "type": "string"
-            },
-            {
-              "id": "54256f4d-7e33-4e0e-abe5-f0e730b2430e",
-              "name": "salesStartISO",
-              "value": "={{ $json.salesStartISO }}",
-              "type": "string"
-            },
-            {
-              "id": "092967e3-cafd-44f8-9233-2aded29bb849",
-              "name": "closingDateISO",
-              "value": "={{ $json.closingDateISO }}",
-              "type": "string"
-            },
-            {
-              "id": "77a7e21c-d855-4bc5-be2a-395268b111f7",
-              "name": "daysRemaining",
-              "value": "={{ $json.daysRemaining }}",
-              "type": "number"
-            },
-            {
-              "id": "0aadbb96-b744-4d2d-ab2c-b08313c046c6",
-              "name": "isAlternateBidAllowed",
-              "value": "={{ $json.isAlternateBidAllowed }}",
-              "type": "string"
-            },
-            {
-              "id": "fc2af017-d435-42ba-8026-a75e7f48d85e",
-              "name": "fullTenderDetails",
-              "value": "={{ $json.fullTenderDetails }}",
-              "type": "string"
-            },
-            {
-              "id": "55468a87-d8b4-449a-a160-38edc1baecd3",
-              "name": "tenderDescription",
-              "value": "={{ $json.tenderDescription }}",
-              "type": "string"
-            },
-            {
-              "id": "dc02ca91-54b4-4a93-b314-719b91fe4e33",
-              "name": "mandatoryCriteria",
-              "value": "={{ $json.mandatoryCriteria }}",
-              "type": "string"
-            },
-            {
-              "id": "a57f74fa-f513-41a2-bbd2-7a22089a694f",
-              "name": "pdfAvailable",
-              "value": "={{ $json.pdfAvailable }}",
-              "type": "boolean"
-            },
-            {
-              "id": "560e719c-9f43-466f-9c17-1c58b555f2ca",
-              "name": "pdfDirectLink",
-              "value": "={{ $json.pdfDirectLink }}",
-              "type": "string"
-            },
-            {
-              "id": "f8a185bb-bb21-4e6b-88e5-e255729d8569",
-              "name": "tenderUrl",
-              "value": "={{ $json.tenderUrl }}",
-              "type": "string"
-            },
-            {
-              "id": "2e7a851a-2ed1-488d-9e73-39685e751207",
-              "name": "eTenderingUrl",
-              "value": "={{ $json.eTenderingUrl }}",
-              "type": "string"
-            },
-            {
-              "id": "0cc1f938-f823-4dcd-bd0c-2edef59ee909",
-              "name": "agencyContactName",
-              "value": "={{ $json.agencyContactName }}",
-              "type": "string"
-            },
-            {
-              "id": "b2dbbb2f-529d-4b13-a78f-c0e03db13c16",
-              "name": "agencyContactPhone",
-              "value": "={{ $json.agencyContactPhone }}",
-              "type": "string"
-            },
-            {
-              "id": "e9515367-0780-4eb6-afa2-fbb7588682bd",
-              "name": "tenderBoardContact",
-              "value": "={{ $json.tenderBoardContact }}",
-              "type": "string"
-            },
-            {
-              "id": "e6f32020-a92d-4758-991d-8005fbf4efaf",
-              "name": "requiresCommercialReg",
-              "value": "={{ $json.requiresCommercialReg }}",
-              "type": "boolean"
-            },
-            {
-              "id": "f8707a48-ad38-43a6-bf26-6e5bdd02f110",
-              "name": "requiresBahranization",
-              "value": "={{ $json.requiresBahranization }}",
-              "type": "boolean"
-            },
-            {
-              "id": "547131e3-bd77-4973-91b0-75e50ed30758",
-              "name": "smeEligible",
-              "value": "={{ $json.smeEligible }}",
-              "type": "boolean"
-            },
-            {
-              "id": "b57f06f5-ec63-4890-9f8d-1a293b741a5f",
-              "name": "registrationRequired",
-              "value": "={{ $json.registrationRequired }}",
-              "type": "boolean"
-            },
-            {
-              "id": "9ca590bc-013c-4056-b1df-dde7d0387bd8",
-              "name": "registrationRequired",
-              "value": "={{ $json.registrationRequired }}",
-              "type": "boolean"
-            },
-            {
-              "id": "aeeb0fdc-c420-4ee7-90e3-5a2a2548be0b",
-              "name": "emailSubject",
-              "value": "={{ $json.emailSubject }}",
-              "type": "string"
-            },
-            {
-              "id": "32cd9159-42be-4901-bb85-09686b055de8",
-              "name": "emailBody",
-              "value": "={{ $json.emailBody }}",
-              "type": "string"
-            },
-            {
-              "id": "2ec73e4f-c466-4a93-88f6-a61fa2f04fd3",
-              "name": "receivedDate",
-              "value": "={{ $json.receivedDate }}",
-              "type": "string"
-            },
-            {
-              "id": "12223d14-8a29-40bc-a52f-090694643a40",
-              "name": "submissionDeadline",
-              "value": "={{ $json.submissionDeadline }}",
-              "type": "string"
-            },
-            {
-              "id": "a23ff03c-594e-43cc-a577-2cd2ad0bc1df",
-              "name": "originalUrl",
-              "value": "={{ $json.originalUrl }}",
-              "type": "string"
-            },
-            {
-              "id": "9ebc26ab-f988-4f74-bb51-9579a74311fd",
-              "name": "subject",
-              "value": "={{ $json.subject }}",
-              "type": "string"
-            },
-            {
-              "id": "825e3ec7-04a0-402b-96f6-4dcd029bd302",
-              "name": "rawBody",
-              "value": "={{ $json.rawBody }}",
-              "type": "string"
-            },
-            {
-              "id": "013672c8-3361-4df6-abf2-616d17a3af9e",
-              "name": "",
-              "value": "={{ Object.keys($json) }}",
-              "type": "string"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.set",
-      "typeVersion": 3.4,
-      "position": [
-        -4848,
-        2256
-      ],
-      "id": "d63e8322-3ed4-488b-91de-611ef70170bd",
-      "name": "Edit Fields2",
-      "disabled": true
-    },
-    {
-      "parameters": {
-        "dataTableId": {
-          "__rl": true,
-          "value": "6RjEvhb3PzAReJx3",
-          "mode": "list",
-          "cachedResultName": "tender flow no ai",
-          "cachedResultUrl": "/projects/c0aq91RJJOOMojVP/datatables/6RjEvhb3PzAReJx3"
-        },
-        "columns": {
-          "mappingMode": "defineBelow",
-          "value": {
-            "initialBond": "={{ $json.initialBond.split(\"BD \")[1] }}",
-            "tenderFees": "={{ $json.tenderFees.split(\"BD \")[1]}}",
-            "timestamp": "={{ $json.timestamp }}",
-            "smeEligible": "={{ $json.smeEligible }}",
-            "tenderNumber": "={{ $json.tenderNumber }}",
-            "tenderTitle": "={{ $json.tenderTitle }}",
-            "paRefNumber": "={{ $json.paRefNumber }}",
-            "issuedBy": "={{ $json.issuedBy }}",
-            "internalExternal": "={{ $json.internalExternal }}",
-            "invitationMethod": "={{ $json.invitationMethod }}",
-            "contractDuration": "={{ $json.contractDuration }}",
-            "bidValidity": "={{ $json.bidValidity }}",
-            "salesStart": "={{ $json.salesStart }}",
-            "closingDate": "={{ $json.closingDate }}",
-            "publishDate": "={{ $json.publishDate }}",
-            "purchaseBefore": "={{ $json.purchaseBefore }}",
-            "openingDate": "={{ $json.openingDate }}",
-            "closingDateFromPage": "={{ $json.closingDateFromPage }}",
-            "salesStartISO": "={{ $json.salesStartISO }}",
-            "closingDateISO": "={{ $json.closingDateISO }}",
-            "daysRemaining": "={{ $json.daysRemaining }}",
-            "classification": "={{ $json.classification }}",
-            "isAlternateBidAllowed": "={{ $json.isAlternateBidAllowed }}",
-            "fullTenderDetails": "={{ $json.fullTenderDetails }}",
-            "tenderDescription": "={{ $json.tenderDescription }}",
-            "mandatoryCriteria": "={{ $json.mandatoryCriteria }}",
-            "pdfAvailable": "={{ $json.pdfAvailable }}",
-            "pdfDirectLink": "={{ $json.pdfDirectLink }}",
-            "tenderUrl": "={{ $json.tenderUrl }}",
-            "eTenderingUrl": "={{ $json.eTenderingUrl }}",
-            "agencyContactname": "={{ $json.agencyContactName }}",
-            "tenderBoardContact": "={{ $json.agencyContactPhone }}",
-            "requiresCommercialReg": "={{ $json.requiresCommercialReg }}",
-            "requiresBahranization": "={{ $json.requiresBahranization }}",
-            "emailSubject": "={{ $json.emailSubject }}",
-            "emailBody": "={{ $json.emailBody }}",
-            "subject": "={{ $json.subject }}",
-            "rawBody": "={{ $json.rawBody }}"
-          },
-          "matchingColumns": [],
-          "schema": [
-            {
-              "id": "timestamp",
-              "displayName": "timestamp",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "dateTime",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "tenderNumber",
-              "displayName": "tenderNumber",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "tenderTitle",
-              "displayName": "tenderTitle",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "paRefNumber",
-              "displayName": "paRefNumber",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "issuedBy",
-              "displayName": "issuedBy",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "internalExternal",
-              "displayName": "internalExternal",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "invitationMethod",
-              "displayName": "invitationMethod",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "tenderFees",
-              "displayName": "tenderFees",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "number",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "contractDuration",
-              "displayName": "contractDuration",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "bidValidity",
-              "displayName": "bidValidity",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "salesStart",
-              "displayName": "salesStart",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "dateTime",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "closingDate",
-              "displayName": "closingDate",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "dateTime",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "publishDate",
-              "displayName": "publishDate",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "purchaseBefore",
-              "displayName": "purchaseBefore",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "dateTime",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "openingDate",
-              "displayName": "openingDate",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "dateTime",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "closingDateFromPage",
-              "displayName": "closingDateFromPage",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "dateTime",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "salesStartISO",
-              "displayName": "salesStartISO",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "dateTime",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "closingDateISO",
-              "displayName": "closingDateISO",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "daysRemaining",
-              "displayName": "daysRemaining",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "classification",
-              "displayName": "classification",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "mandatoryCriteria",
-              "displayName": "mandatoryCriteria",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "tenderDescription",
-              "displayName": "tenderDescription",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "isAlternateBidAllowed",
-              "displayName": "isAlternateBidAllowed",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "fullTenderDetails",
-              "displayName": "fullTenderDetails",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "pdfAvailable",
-              "displayName": "pdfAvailable",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "boolean",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "pdfDirectLink",
-              "displayName": "pdfDirectLink",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "tenderUrl",
-              "displayName": "tenderUrl",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "eTenderingUrl",
-              "displayName": "eTenderingUrl",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "agencyContactname",
-              "displayName": "agencyContactname",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "requiresCommercialReg",
-              "displayName": "requiresCommercialReg",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "tenderBoardContact",
-              "displayName": "tenderBoardContact",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "requiresBahranization",
-              "displayName": "requiresBahranization",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "smeEligible",
-              "displayName": "smeEligible",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "boolean",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "emailSubject",
-              "displayName": "emailSubject",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "emailBody",
-              "displayName": "emailBody",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "subject",
-              "displayName": "subject",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "rawBody",
-              "displayName": "rawBody",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "initialBond",
-              "displayName": "initialBond",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            }
-          ],
-          "attemptToConvertTypes": false,
-          "convertFieldsToString": false
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.dataTable",
-      "typeVersion": 1,
-      "position": [
-        -4624,
-        2256
-      ],
-      "id": "df8d2f93-5ce8-4580-ac6f-d575343858d1",
-      "name": "Insert row4",
-      "disabled": true
-    },
-    {
-      "parameters": {
-        "options": {}
-      },
-      "type": "n8n-nodes-base.set",
-      "typeVersion": 3.4,
-      "position": [
-        -4768,
-        2000
-      ],
-      "id": "4ea38623-dcf9-4da0-9341-2fb3d9bd51b5",
-      "name": "Edit Fields3",
-      "disabled": true
     },
     {
       "parameters": {
@@ -1847,652 +133,11 @@
       "type": "n8n-nodes-base.filter",
       "typeVersion": 2.2,
       "position": [
-        -1408,
-        1696
+        -2144,
+        1520
       ],
       "id": "50ff1975-191a-424c-8912-b6e3fb380d9d",
       "name": "Filter1"
-    },
-    {
-      "parameters": {
-        "jsCode": "// Get all tenders from the DB\nconst tenders = items.map(i => i.json);\n\n// Load previously sent tenders (from another node or DB table)\nconst sent = [];\n\n// Keep only new tenders (last 24h + not sent)\nconst now = new Date();\nconst oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);\n\nconst newTenders = tenders.filter(t => {\n  const createdAt = new Date(t.timestamp);\n  const isNew = createdAt >= oneDayAgo;\n  const notSent = !sent.includes(t.tenderNumber);\n  return isNew && notSent;\n});\n\n// Summary message (for next code node)\nreturn [\n  {\n    json: {\n      newCount: newTenders.length,\n      totalCount: tenders.length,\n      newTenders\n    }\n  }\n];\n"
-      },
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        -4800,
-        1776
-      ],
-      "id": "163a5403-8089-4293-9b4b-304410fb9f8e",
-      "name": "Code in JavaScript2",
-      "disabled": true
-    },
-    {
-      "parameters": {
-        "operation": "extractHtmlContent",
-        "dataPropertyName": "=data",
-        "extractionValues": {
-          "values": [
-            {
-              "key": "tenderTitle",
-              "cssSelector": ".case-detail-info > h3:nth-of-type(1)"
-            },
-            {
-              "key": "tenderNumber",
-              "cssSelector": ".case-detail-info > p:nth-of-type(1) > span:nth-of-type(1)"
-            },
-            {
-              "key": "paRefNumber",
-              "cssSelector": ".case-detail-info > p:nth-of-type(2) > span:nth-of-type(1)"
-            },
-            {
-              "key": "tenderDescription",
-              "cssSelector": ".case-detail-info > p:nth-of-type(3)"
-            },
-            {
-              "key": "issuedBy",
-              "cssSelector": ".case-detail-info > .dl-horizontal > dd:nth-of-type(1)"
-            },
-            {
-              "key": "internalExternal",
-              "cssSelector": ".case-detail-info > .dl-horizontal > dd:nth-of-type(2)"
-            },
-            {
-              "key": "invitationMethod",
-              "cssSelector": ".case-detail-info > .dl-horizontal > dd:nth-of-type(3)"
-            },
-            {
-              "key": "initialBond",
-              "cssSelector": ".case-detail-info > .dl-horizontal > dd:nth-of-type(4)"
-            },
-            {
-              "key": "bidValidity",
-              "cssSelector": ".case-detail-info > .dl-horizontal > dd:nth-of-type(5)"
-            },
-            {
-              "key": "tenderFees",
-              "cssSelector": ".case-detail-info > .dl-horizontal > dd:nth-of-type(6)"
-            },
-            {
-              "key": "contractDuration",
-              "cssSelector": ".case-detail-info > .dl-horizontal > dd:nth-of-type(7)"
-            },
-            {
-              "key": "isAlternateBidAllowed",
-              "cssSelector": ".case-detail-info > .dl-horizontal > dd:nth-of-type(8)"
-            },
-            {
-              "key": "publishDate",
-              "cssSelector": ".case-detail-info > .dl-horizontal > dd:nth-of-type(9)"
-            },
-            {
-              "key": "purchaseBefore",
-              "cssSelector": ".case-detail-info > .dl-horizontal > dd:nth-of-type(10)"
-            },
-            {
-              "key": "closingDate",
-              "cssSelector": ".case-detail-info > .dl-horizontal > dd:nth-of-type(11) > span:nth-of-type(1)"
-            },
-            {
-              "key": "openingDate",
-              "cssSelector": ".case-detail-info > .dl-horizontal > dd:nth-of-type(12)"
-            },
-            {
-              "key": "additionalNotes",
-              "cssSelector": ".additional-note > p:nth-of-type(3)"
-            },
-            {
-              "key": "pdfDirectLink",
-              "cssSelector": ".ot-btn"
-            },
-            {
-              "key": "requiresCommercialReg",
-              "cssSelector": ".normallist > li:nth-of-type(1)"
-            },
-            {
-              "key": "primaryGuarantee",
-              "cssSelector": ".normallist > li:nth-of-type(2)"
-            },
-            {
-              "key": "twoenvelops",
-              "cssSelector": ".normallist > li:nth-of-type(3)"
-            },
-            {
-              "key": "smeEligible",
-              "cssSelector": ".normallist > li:nth-of-type(9)"
-            },
-            {
-              "key": "tenderBoardContact",
-              "cssSelector": ".normallist > li:nth-of-type(10)"
-            },
-            {
-              "key": "inquiries",
-              "cssSelector": "p:nth-of-type(2) > strong:nth-of-type(1)"
-            },
-            {
-              "key": "contact",
-              "cssSelector": "a:nth-of-type(1) > strong:nth-of-type(1)"
-            },
-            {
-              "key": "howto1",
-              "cssSelector": ".normallist > li:nth-of-type(1)"
-            },
-            {
-              "key": "howto2",
-              "cssSelector": ".normallist > li:nth-of-type(2)"
-            },
-            {
-              "key": "howto3",
-              "cssSelector": ".normallist > li:nth-of-type(3)"
-            },
-            {
-              "key": "howto4",
-              "cssSelector": ".normallist > li:nth-of-type(4)"
-            },
-            {
-              "key": "howto5",
-              "cssSelector": ".normallist > li:nth-of-type(5)"
-            },
-            {
-              "key": "howto6",
-              "cssSelector": ".normallist > li:nth-of-type(6)"
-            },
-            {
-              "key": "requirements1",
-              "cssSelector": ".sub-normallist > li:nth-of-type(1)"
-            },
-            {
-              "key": "requirements2",
-              "cssSelector": ".sub-normallist > li:nth-of-type(2)"
-            },
-            {
-              "key": "declaration1",
-              "cssSelector": ".normallist > li:nth-of-type(8)"
-            },
-            {
-              "key": "registrationUrl",
-              "cssSelector": "li:nth-of-type(11) > a:nth-of-type(1)"
-            },
-            {
-              "key": "fullTenderDetails",
-              "cssSelector": ".box-text-case > .col-md-8"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.html",
-      "typeVersion": 1.2,
-      "position": [
-        -5072,
-        2480
-      ],
-      "id": "635b3b46-778e-4cf4-b0a9-d487219bf851",
-      "name": "HTML4",
-      "disabled": true
-    },
-    {
-      "parameters": {
-        "jsCode": "return items.map((item, index) => {\n  // Get HTML from HTTP Request\n  let html = \"\";\n  if (typeof item.json === 'string') {\n    html = item.json;\n  } else if (item.json?.data) {\n    html = item.json.data;\n  } else if (item.binary?.data) {\n    html = item.binary.data.toString('utf-8');\n  }\n  \n  // Get email data from previous Code2 node\n  const allItems = $('Code2').all();\n  const emailData = allItems[index]?.json || {};\n  \n  // Clean HTML\n  const cleanHtml = html\n    .replace(/<script\\b[^<]*(?:(?!<\\/script>)<[^<]*)*<\\/script>/gi, '')\n    .replace(/<style\\b[^<]*(?:(?!<\\/style>)<[^<]*)*<\\/style>/gi, '');\n  \n  // Helper to clean text\n  const cleanText = (text) => {\n    if (!text) return null;\n    return text\n      .replace(/<[^>]*>/g, ' ')\n      .replace(/&nbsp;/g, ' ')\n      .replace(/&amp;/g, '&')\n      .replace(/&lt;/g, '<')\n      .replace(/&gt;/g, '>')\n      .replace(/&quot;/g, '\"')\n      .replace(/\\s+/g, ' ')\n      .trim()\n      .replace(/\\s*<[^>]*$/, '');\n  };\n  \n  // Extract tender details section\n  const detailsMatch = cleanHtml.match(/TENDER\\s+DESCRIPTION([\\s\\S]*?)(?:CONTACT\\s+INFORMATION|$)/i);\n  const fullTenderDetails = detailsMatch ? cleanText(detailsMatch[1]) : \"\";\n  \n  // ==================================================\n  // PARSE FROM fullTenderDetails\n  // ==================================================\n  \n  // PA Ref Number / Tender Reference\n  const paRefMatch = fullTenderDetails.match(/(?:Tender Reference|PA Ref Number)\\s*:?\\s*([A-Z0-9\\/-]+)/i);\n  const paRefNumber = paRefMatch ? paRefMatch[1].trim() : null;\n  \n  // Issued By\n  const issuedByMatch = fullTenderDetails.match(/Issued by\\s+([^I]+?)(?=\\s+Internal\\/External|$)/i);\n  const issuedBy = issuedByMatch ? issuedByMatch[1].trim() : null;\n  \n  // Initial Bond\n  const initialBondMatch = fullTenderDetails.match(/Initial Bond\\s+(BD\\s*[\\d,]+)/i);\n  const initialBond = initialBondMatch ? initialBondMatch[1].trim() : null;\n  \n  // Tender Fees\n  const tenderFeesMatch = fullTenderDetails.match(/Tender Fees\\s+(BD\\s*[\\d,]+)/i);\n  const tenderFees = tenderFeesMatch ? tenderFeesMatch[1].trim() : null;\n  \n  // Contract Duration\n  const contractDurationMatch = fullTenderDetails.match(/Contract Duration\\s+(\\d+\\s+(?:Year|Month|Day)s?)/i);\n  const contractDuration = contractDurationMatch ? contractDurationMatch[1].trim() : null;\n  \n  // Bid Validity\n  const bidValidityMatch = fullTenderDetails.match(/Bid Validity[^0-9]*(\\d+\\s+days)/i);\n  const bidValidity = bidValidityMatch ? bidValidityMatch[1].trim() : null;\n  \n  // Invitation Method\n  const invitationMethodMatch = fullTenderDetails.match(/Invitation Method\\s+([^\\n]+?)(?=\\s+Classification|$)/i);\n  const invitationMethod = invitationMethodMatch ? invitationMethodMatch[1].trim() : null;\n  \n  // Internal/External\n  const internalExternalMatch = fullTenderDetails.match(/Internal\\/External\\s+(Internal|External)/i);\n  const internalExternal = internalExternalMatch ? internalExternalMatch[1].trim() : null;\n  \n  // Classification/CPV Codes - FIXED\n  const classificationMatch = fullTenderDetails.match(/Classification\\/CPV Codes\\s+-->\\s*([^-]+)\\s+-\\s+([^-]+?)\\s+-->/i);\n  const classification = classificationMatch ? `${classificationMatch[1].trim()} - ${classificationMatch[2].trim()}` : null;\n  \n  // Publish Date\n  const publishDateMatch = fullTenderDetails.match(/Publish Date\\s+([A-Z][a-z]+,\\s+\\d{2}\\s+[A-Z][a-z]+\\s+\\d{4})/i);\n  const publishDate = publishDateMatch ? publishDateMatch[1].trim() : null;\n  \n  // Purchase Before\n  const purchaseBeforeMatch = fullTenderDetails.match(/Purchase Before\\s+([A-Z][a-z]+,\\s+\\d{2}\\s+[A-Z][a-z]+\\s+\\d{4})/i);\n  const purchaseBefore = purchaseBeforeMatch ? purchaseBeforeMatch[1].trim() : null;\n  \n  // Opening Date\n  const openingDateMatch = fullTenderDetails.match(/Opening Date\\s+([A-Z][a-z]+,\\s+\\d{2}\\s+[A-Z][a-z]+\\s+\\d{4})/i);\n  const openingDate = openingDateMatch ? openingDateMatch[1].trim() : null;\n  \n  // Closing Date\n  const closingDateMatch = fullTenderDetails.match(/Closing Date\\s+([A-Z][a-z]+,\\s+\\d{2}\\s+[A-Z][a-z]+\\s+\\d{4})/i);\n  const closingDateFromPage = closingDateMatch ? closingDateMatch[1].trim() : null;\n  \n  // Mandatory Criteria - FIXED (stop before Arabic)\n  const mandatoryCriteriaMatch = fullTenderDetails.match(/Mandatory Criteria:\\s*(.*?)(?=\\s*,\\s*[إمرجعنوصف]|Download|$)/i);\n  const mandatoryCriteria = mandatoryCriteriaMatch ? mandatoryCriteriaMatch[1].trim() : null;\n  \n  // Tender Description - FIXED (stop before Mandatory or Arabic)\n  const tenderDescMatch = fullTenderDetails.match(/Tender Description:\\s*(.*?)(?=\\s*Mandatory Criteria|,\\s*[إمرجعنوصف]|Download|$)/i);\n  const tenderDescription = tenderDescMatch ? tenderDescMatch[1].trim() : null;\n  \n  // Is Alternate Bid Allowed\n  const isAlternateBidAllowed = /Is Alternate Bid Allowed\\s+Yes/i.test(fullTenderDetails) ? 'Yes' : \n                                 /Is Alternate Bid Allowed\\s+No/i.test(fullTenderDetails) ? 'No' : null;\n  \n  // ==================================================\n  // PDF DETECTION - IMPROVED\n  // ==================================================\n  let pdfAvailable = false;\n  let pdfDirectLink = null;\n  \n  // Check for dynamic download button\n  if (html.includes('lnkBtnDwnld') || html.includes('fa-download')) {\n    pdfAvailable = true;\n  }\n  \n  // Try to find direct PDF links (if any)\n  const ignorePdfs = ['Vision2030', 'guide', 'help', 'faq', 'terms'];\n  const pdfMatch = html.match(/href=[\"']([^\"']*\\.pdf[^\"']*)[\"']/i);\n  \n  if (pdfMatch && !ignorePdfs.some(ignore => pdfMatch[1].toLowerCase().includes(ignore.toLowerCase()))) {\n    pdfDirectLink = pdfMatch[1];\n    if (!pdfDirectLink.startsWith('http')) {\n      pdfDirectLink = pdfDirectLink.startsWith('/') \n        ? `https://www.tenderboard.gov.bh${pdfDirectLink}`\n        : `https://www.tenderboard.gov.bh/${pdfDirectLink}`;\n    }\n    pdfAvailable = true;\n  }\n  \n  // ==================================================\n  // CONTACT INFO EXTRACTION\n  // ==================================================\n  \n  // Agency Contact (before \"Bahrain Tender Board\" section)\n  const agencyContactMatch = fullTenderDetails.match(/For further inquiries please contact on:\\s*([^\\n]+?)\\s*(\\d{8})/i);\n  const agencyContactName = agencyContactMatch ? agencyContactMatch[1].trim() : issuedBy;\n  const agencyContactPhone = agencyContactMatch ? `+973 ${agencyContactMatch[2].trim()}` : null;\n  \n  // Tender Board contacts\n  const allPhones = fullTenderDetails.match(/\\+?973[\\s\\d]{8,}/g) || [];\n  const tenderBoardPhones = allPhones.filter(p => !agencyContactPhone || !p.includes(agencyContactPhone.replace(/\\D/g, '')));\n  \n  const tenderBoardEmail = fullTenderDetails.match(/([a-z0-9._%+-]+@tenderboard\\.gov\\.bh)/i)?.[1] || null;\n  const poBox = fullTenderDetails.match(/P\\.O\\.\\s*Box\\s+(\\d+)/i)?.[1] || null;\n  \n  // ==================================================\n  // REQUIREMENTS FLAGS\n  // ==================================================\n  const requiresCommercialReg = /Commercial Registration Certificate|valid CR/i.test(fullTenderDetails);\n  const requiresBahranization = /Bahranization Certificate|employment percentages for Bahraini manpower/i.test(fullTenderDetails);\n  const smeEligible = /Small and Medium Enterprises.*10%|SMEs Classification Certificate/i.test(fullTenderDetails);\n  const registrationRequired = /register.*e-tendering system/i.test(fullTenderDetails);\n  \n  // ==================================================\n  // DATE PARSING TO ISO\n  // ==================================================\n  const parseDate = (dateStr) => {\n    if (!dateStr) return null;\n    try {\n      const months = {\n        'JAN': 0, 'FEB': 1, 'MAR': 2, 'APR': 3, 'MAY': 4, 'JUN': 5,\n        'JUL': 6, 'AUG': 7, 'SEP': 8, 'OCT': 9, 'NOV': 10, 'DEC': 11\n      };\n      const parts = dateStr.match(/(\\d{2})-([A-Z]{3})-(\\d{4})\\s+(\\d{2}):(\\d{2}):(\\d{2})/i);\n      if (parts) {\n        const [, day, month, year, hour, minute, second] = parts;\n        const date = new Date(year, months[month.toUpperCase()], day, hour, minute, second);\n        return date.toISOString();\n      }\n    } catch (e) {}\n    return dateStr;\n  };\n  \n  // ==================================================\n  // CALCULATE DAYS REMAINING\n  // ==================================================\n  const getDaysRemaining = (isoDate) => {\n    if (!isoDate) return null;\n    try {\n      const deadline = new Date(isoDate);\n      const today = new Date();\n      return Math.ceil((deadline - today) / (1000 * 60 * 60 * 24));\n    } catch (e) {\n      return null;\n    }\n  };\n  \n  const daysRemaining = getDaysRemaining(parseDate(emailData.closingDate));\n  \n  // ==================================================\n  // RETURN COMPLETE STRUCTURED DATA\n  // ==================================================\n  return {\n    json: {\n      // ===== CORE TENDER INFO =====\n      timestamp: emailData.timestamp || new Date().toISOString(),\n      tenderNumber: emailData.tenderNumber,\n      tenderTitle: emailData.tenderTitle,\n      paRefNumber: paRefNumber,\n      \n      // ===== ISSUING AUTHORITY =====\n      issuedBy: issuedBy,\n      internalExternal: internalExternal,\n      invitationMethod: invitationMethod,\n      \n      // ===== FINANCIAL =====\n      initialBond: initialBond,\n      tenderFees: tenderFees,\n      contractDuration: contractDuration,\n      bidValidity: bidValidity,\n      \n      // ===== DATES (Original Format) =====\n      salesStart: emailData.salesStart,\n      closingDate: emailData.closingDate,\n      publishDate: publishDate,\n      purchaseBefore: purchaseBefore,\n      openingDate: openingDate,\n      closingDateFromPage: closingDateFromPage,\n      \n      // ===== DATES (ISO Format for DB) =====\n      salesStartISO: parseDate(emailData.salesStart),\n      closingDateISO: parseDate(emailData.closingDate),\n      \n      // ===== CALCULATED FIELDS =====\n      daysRemaining: daysRemaining,\n      \n      // ===== CLASSIFICATIONS =====\n      classification: classification,\n      isAlternateBidAllowed: isAlternateBidAllowed,\n      \n      // ===== CONTENT =====\n      fullTenderDetails: fullTenderDetails,\n      tenderDescription: tenderDescription,\n      mandatoryCriteria: mandatoryCriteria,\n      \n      // ===== DOCUMENTS =====\n      pdfAvailable: pdfAvailable,\n      pdfDirectLink: pdfDirectLink,\n      \n      // ===== URLS =====\n      tenderUrl: emailData.tenderUrl,\n      eTenderingUrl: emailData.eTenderingUrl,\n      \n      // ===== CONTACT INFO =====\n      agencyContacName:  agencyContactName,\n       agencyContactPhone: agencyContactPhone,\n      \n      tenderBoardContact: {\n        email: tenderBoardEmail,\n        phones: tenderBoardPhones,\n        poBox: poBox ? `P.O. Box ${poBox}` : null\n      },\n      \n      // ===== REQUIREMENTS =====\n      requiresCommercialReg: requiresCommercialReg,\n      requiresBahranization: requiresBahranization,\n      smeEligible: smeEligible,\n      registrationRequired: registrationRequired,\n      \n      // ===== EMAIL DATA =====\n      emailSubject: emailData.emailSubject,\n      emailBody: emailData.emailBody,\n      \n      // ===== LEGACY FIELDS (for backward compatibility) =====\n      receivedDate: emailData.timestamp,\n      submissionDeadline: emailData.closingDate,\n      originalUrl: emailData.eTenderingUrl,\n      subject: emailData.emailSubject,\n      rawBody: emailData.emailBody\n    }\n  };\n});"
-      },
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        -4848,
-        2480
-      ],
-      "id": "e0835ee0-8a9d-4bfb-8021-fac28fa422a6",
-      "name": "Code4",
-      "disabled": true
-    },
-    {
-      "parameters": {
-        "dataTableId": {
-          "__rl": true,
-          "value": "6RjEvhb3PzAReJx3",
-          "mode": "list",
-          "cachedResultName": "tender flow no ai",
-          "cachedResultUrl": "/projects/c0aq91RJJOOMojVP/datatables/6RjEvhb3PzAReJx3"
-        },
-        "columns": {
-          "mappingMode": "defineBelow",
-          "value": {
-            "initialBond": "={{ $json.initialBond.split(\"BD \")[1] }}",
-            "tenderFees": "={{ $json.tenderFees.split(\"BD \")[1]}}",
-            "timestamp": "={{ $json.timestamp }}",
-            "smeEligible": "={{ $json.smeEligible }}",
-            "tenderNumber": "={{ $json.tenderNumber }}",
-            "tenderTitle": "={{ $json.tenderTitle }}",
-            "paRefNumber": "={{ $json.paRefNumber }}",
-            "issuedBy": "={{ $json.issuedBy }}",
-            "internalExternal": "={{ $json.internalExternal }}",
-            "invitationMethod": "={{ $json.invitationMethod }}",
-            "contractDuration": "={{ $json.contractDuration }}",
-            "bidValidity": "={{ $json.bidValidity }}",
-            "salesStart": "={{ $json.salesStart }}",
-            "closingDate": "={{ $json.closingDate }}",
-            "publishDate": "={{ $json.publishDate }}",
-            "purchaseBefore": "={{ $json.purchaseBefore }}",
-            "openingDate": "={{ $json.openingDate }}",
-            "closingDateFromPage": "={{ $json.closingDateFromPage }}",
-            "salesStartISO": "={{ $json.salesStartISO }}",
-            "closingDateISO": "={{ $json.closingDateISO }}",
-            "daysRemaining": "={{ $json.daysRemaining }}",
-            "classification": "={{ $json.classification }}",
-            "isAlternateBidAllowed": "={{ $json.isAlternateBidAllowed }}",
-            "fullTenderDetails": "={{ $json.fullTenderDetails }}",
-            "tenderDescription": "={{ $json.tenderDescription }}",
-            "mandatoryCriteria": "={{ $json.mandatoryCriteria }}",
-            "pdfAvailable": "={{ $json.pdfAvailable }}",
-            "pdfDirectLink": "={{ $json.pdfDirectLink }}",
-            "tenderUrl": "={{ $json.tenderUrl }}",
-            "eTenderingUrl": "={{ $json.eTenderingUrl }}",
-            "agencyContactname": "={{ $json.agencyContactName }}",
-            "tenderBoardContact": "={{ $json.agencyContactPhone }}",
-            "requiresCommercialReg": "={{ $json.requiresCommercialReg }}",
-            "requiresBahranization": "={{ $json.requiresBahranization }}",
-            "emailSubject": "={{ $json.emailSubject }}",
-            "emailBody": "={{ $json.emailBody }}",
-            "subject": "={{ $json.subject }}",
-            "rawBody": "={{ $json.rawBody }}"
-          },
-          "matchingColumns": [],
-          "schema": [
-            {
-              "id": "timestamp",
-              "displayName": "timestamp",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "dateTime",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "tenderNumber",
-              "displayName": "tenderNumber",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "tenderTitle",
-              "displayName": "tenderTitle",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "paRefNumber",
-              "displayName": "paRefNumber",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "issuedBy",
-              "displayName": "issuedBy",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "internalExternal",
-              "displayName": "internalExternal",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "invitationMethod",
-              "displayName": "invitationMethod",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "tenderFees",
-              "displayName": "tenderFees",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "number",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "contractDuration",
-              "displayName": "contractDuration",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "bidValidity",
-              "displayName": "bidValidity",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "salesStart",
-              "displayName": "salesStart",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "dateTime",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "closingDate",
-              "displayName": "closingDate",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "dateTime",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "publishDate",
-              "displayName": "publishDate",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "purchaseBefore",
-              "displayName": "purchaseBefore",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "dateTime",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "openingDate",
-              "displayName": "openingDate",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "dateTime",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "closingDateFromPage",
-              "displayName": "closingDateFromPage",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "dateTime",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "salesStartISO",
-              "displayName": "salesStartISO",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "dateTime",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "closingDateISO",
-              "displayName": "closingDateISO",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "daysRemaining",
-              "displayName": "daysRemaining",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "classification",
-              "displayName": "classification",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "mandatoryCriteria",
-              "displayName": "mandatoryCriteria",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "tenderDescription",
-              "displayName": "tenderDescription",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "isAlternateBidAllowed",
-              "displayName": "isAlternateBidAllowed",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "fullTenderDetails",
-              "displayName": "fullTenderDetails",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "pdfAvailable",
-              "displayName": "pdfAvailable",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "boolean",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "pdfDirectLink",
-              "displayName": "pdfDirectLink",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "tenderUrl",
-              "displayName": "tenderUrl",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "eTenderingUrl",
-              "displayName": "eTenderingUrl",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "agencyContactname",
-              "displayName": "agencyContactname",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "requiresCommercialReg",
-              "displayName": "requiresCommercialReg",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "tenderBoardContact",
-              "displayName": "tenderBoardContact",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "requiresBahranization",
-              "displayName": "requiresBahranization",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "smeEligible",
-              "displayName": "smeEligible",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "boolean",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "emailSubject",
-              "displayName": "emailSubject",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "emailBody",
-              "displayName": "emailBody",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "subject",
-              "displayName": "subject",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "rawBody",
-              "displayName": "rawBody",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            },
-            {
-              "id": "initialBond",
-              "displayName": "initialBond",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "readOnly": false,
-              "removed": false
-            }
-          ],
-          "attemptToConvertTypes": false,
-          "convertFieldsToString": false
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.dataTable",
-      "typeVersion": 1,
-      "position": [
-        -4624,
-        2480
-      ],
-      "id": "67c931e1-8d6b-4ef5-a8a6-24f41becd9ce",
-      "name": "Insert row6",
-      "disabled": true
     },
     {
       "parameters": {
@@ -2654,8 +299,8 @@
       "type": "n8n-nodes-base.html",
       "typeVersion": 1.2,
       "position": [
-        -928,
-        2032
+        -1696,
+        1744
       ],
       "id": "f12c3ba0-bd48-40d8-afee-f2d9a5a741c1",
       "name": "HTML5"
@@ -2696,8 +341,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        -1712,
-        2416
+        -2368,
+        1936
       ],
       "id": "3ee9cbc8-5ef3-47c8-8c04-df60176c00e9",
       "name": "If"
@@ -2719,8 +364,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        -1264,
-        2096
+        -1920,
+        1744
       ],
       "id": "ab33650e-2a30-43d6-bd1b-44d0096aeb60",
       "name": "HTTP Request"
@@ -2734,8 +379,8 @@
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2.1,
       "position": [
-        -2032,
-        2416
+        -2592,
+        1936
       ],
       "id": "02b19e0f-1846-4069-81a9-92f26625571b",
       "name": "Webhook1",
@@ -2748,8 +393,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -1424,
-        2352
+        -2144,
+        1840
       ],
       "id": "b6a7001f-05fa-4b52-9e51-216c661e53a1",
       "name": "Code6"
@@ -2811,8 +456,8 @@
       "type": "n8n-nodes-base.dataTable",
       "typeVersion": 1,
       "position": [
-        -1360,
-        2672
+        -2144,
+        2032
       ],
       "id": "6f1f59fb-fc80-4e26-ac2d-5d6a18753ed4",
       "name": "Insert row5"
@@ -2824,8 +469,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -832,
-        2304
+        -1472,
+        1744
       ],
       "id": "79f221eb-b25b-486d-b2f4-9ec55d2db8b5",
       "name": "Code7"
@@ -3271,8 +916,8 @@
       "type": "n8n-nodes-base.dataTable",
       "typeVersion": 1,
       "position": [
-        -288,
-        2304
+        -1024,
+        1744
       ],
       "id": "af452cae-f53d-483f-925f-20c5ac44a89f",
       "name": "Insert row"
@@ -3284,25 +929,11 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -592,
-        2304
+        -1248,
+        1744
       ],
       "id": "850c8fe0-cfaa-4b82-b2e1-70df0e7ea307",
       "name": "Code in JavaScript3"
-    },
-    {
-      "parameters": {
-        "jsCode": "return items.map((item, index) => {\n  // Get HTML from HTTP Request\n  let html = \"\";\n  if (typeof item.json === 'string') {\n    html = item.json;\n  } else if (item.json?.data) {\n    html = item.json.data;\n  } else if (item.binary?.data) {\n    html = item.binary.data.toString('utf-8');\n  }\n  \n  // Get email data from previous Code2 node\n  const allItems = $('Code2').all();\n  const emailData = allItems[index]?.json || {};\n  \n  // Clean HTML\n  const cleanHtml = html\n    .replace(/<script\\b[^<]*(?:(?!<\\/script>)<[^<]*)*<\\/script>/gi, '')\n    .replace(/<style\\b[^<]*(?:(?!<\\/style>)<[^<]*)*<\\/style>/gi, '');\n  \n  // Helper to clean text\n  const cleanText = (text) => {\n    if (!text) return null;\n    return text\n      .replace(/<[^>]*>/g, ' ')\n      .replace(/&nbsp;/g, ' ')\n      .replace(/&amp;/g, '&')\n      .replace(/&lt;/g, '<')\n      .replace(/&gt;/g, '>')\n      .replace(/&quot;/g, '\"')\n      .replace(/\\s+/g, ' ')\n      .trim()\n      .replace(/\\s*<[^>]*$/, '');\n  };\n  \n  // Extract tender details section\n  const detailsMatch = cleanHtml.match(/TENDER\\s+DESCRIPTION([\\s\\S]*?)(?:CONTACT\\s+INFORMATION|$)/i);\n  const fullTenderDetails = detailsMatch ? cleanText(detailsMatch[1]) : \"\";\n  \n  // ==================================================\n  // PARSE FROM fullTenderDetails\n  // ==================================================\n  \n  // PA Ref Number / Tender Reference\n  const paRefMatch = fullTenderDetails.match(/(?:Tender Reference|PA Ref Number)\\s*:?\\s*([A-Z0-9\\/-]+)/i);\n  const paRefNumber = paRefMatch ? paRefMatch[1].trim() : null;\n  \n  // Issued By\n  const issuedByMatch = fullTenderDetails.match(/Issued by\\s+([^I]+?)(?=\\s+Internal\\/External|$)/i);\n  const issuedBy = issuedByMatch ? issuedByMatch[1].trim() : null;\n  \n  // Initial Bond\n  const initialBondMatch = fullTenderDetails.match(/Initial Bond\\s+(BD\\s*[\\d,]+)/i);\n  const initialBond = initialBondMatch ? initialBondMatch[1].trim() : null;\n  \n  // Tender Fees\n  const tenderFeesMatch = fullTenderDetails.match(/Tender Fees\\s+(BD\\s*[\\d,]+)/i);\n  const tenderFees = tenderFeesMatch ? tenderFeesMatch[1].trim() : null;\n  \n  // Contract Duration\n  const contractDurationMatch = fullTenderDetails.match(/Contract Duration\\s+(\\d+\\s+(?:Year|Month|Day)s?)/i);\n  const contractDuration = contractDurationMatch ? contractDurationMatch[1].trim() : null;\n  \n  // Bid Validity\n  const bidValidityMatch = fullTenderDetails.match(/Bid Validity[^0-9]*(\\d+\\s+days)/i);\n  const bidValidity = bidValidityMatch ? bidValidityMatch[1].trim() : null;\n  \n  // Invitation Method\n  const invitationMethodMatch = fullTenderDetails.match(/Invitation Method\\s+([^\\n]+?)(?=\\s+Classification|$)/i);\n  const invitationMethod = invitationMethodMatch ? invitationMethodMatch[1].trim() : null;\n  \n  // Internal/External\n  const internalExternalMatch = fullTenderDetails.match(/Internal\\/External\\s+(Internal|External)/i);\n  const internalExternal = internalExternalMatch ? internalExternalMatch[1].trim() : null;\n  \n  // Classification/CPV Codes - FIXED\n  const classificationMatch = fullTenderDetails.match(/Classification\\/CPV Codes\\s+-->\\s*([^-]+)\\s+-\\s+([^-]+?)\\s+-->/i);\n  const classification = classificationMatch ? `${classificationMatch[1].trim()} - ${classificationMatch[2].trim()}` : null;\n  \n  // Publish Date\n  const publishDateMatch = fullTenderDetails.match(/Publish Date\\s+([A-Z][a-z]+,\\s+\\d{2}\\s+[A-Z][a-z]+\\s+\\d{4})/i);\n  const publishDate = publishDateMatch ? publishDateMatch[1].trim() : null;\n  \n  // Purchase Before\n  const purchaseBeforeMatch = fullTenderDetails.match(/Purchase Before\\s+([A-Z][a-z]+,\\s+\\d{2}\\s+[A-Z][a-z]+\\s+\\d{4})/i);\n  const purchaseBefore = purchaseBeforeMatch ? purchaseBeforeMatch[1].trim() : null;\n  \n  // Opening Date\n  const openingDateMatch = fullTenderDetails.match(/Opening Date\\s+([A-Z][a-z]+,\\s+\\d{2}\\s+[A-Z][a-z]+\\s+\\d{4})/i);\n  const openingDate = openingDateMatch ? openingDateMatch[1].trim() : null;\n  \n  // Closing Date\n  const closingDateMatch = fullTenderDetails.match(/Closing Date\\s+([A-Z][a-z]+,\\s+\\d{2}\\s+[A-Z][a-z]+\\s+\\d{4})/i);\n  const closingDateFromPage = closingDateMatch ? closingDateMatch[1].trim() : null;\n  \n  // Mandatory Criteria - FIXED (stop before Arabic)\n  const mandatoryCriteriaMatch = fullTenderDetails.match(/Mandatory Criteria:\\s*(.*?)(?=\\s*,\\s*[إمرجعنوصف]|Download|$)/i);\n  const mandatoryCriteria = mandatoryCriteriaMatch ? mandatoryCriteriaMatch[1].trim() : null;\n  \n  // Tender Description - FIXED (stop before Mandatory or Arabic)\n  const tenderDescMatch = fullTenderDetails.match(/Tender Description:\\s*(.*?)(?=\\s*Mandatory Criteria|,\\s*[إمرجعنوصف]|Download|$)/i);\n  const tenderDescription = tenderDescMatch ? tenderDescMatch[1].trim() : null;\n  \n  // Is Alternate Bid Allowed\n  const isAlternateBidAllowed = /Is Alternate Bid Allowed\\s+Yes/i.test(fullTenderDetails) ? 'Yes' : \n                                 /Is Alternate Bid Allowed\\s+No/i.test(fullTenderDetails) ? 'No' : null;\n  \n  // ==================================================\n  // PDF DETECTION - IMPROVED\n  // ==================================================\n  let pdfAvailable = false;\n  let pdfDirectLink = null;\n  \n  // Check for dynamic download button\n  if (html.includes('lnkBtnDwnld') || html.includes('fa-download')) {\n    pdfAvailable = true;\n  }\n  \n  // Try to find direct PDF links (if any)\n  const ignorePdfs = ['Vision2030', 'guide', 'help', 'faq', 'terms'];\n  const pdfMatch = html.match(/href=[\"']([^\"']*\\.pdf[^\"']*)[\"']/i);\n  \n  if (pdfMatch && !ignorePdfs.some(ignore => pdfMatch[1].toLowerCase().includes(ignore.toLowerCase()))) {\n    pdfDirectLink = pdfMatch[1];\n    if (!pdfDirectLink.startsWith('http')) {\n      pdfDirectLink = pdfDirectLink.startsWith('/') \n        ? `https://www.tenderboard.gov.bh${pdfDirectLink}`\n        : `https://www.tenderboard.gov.bh/${pdfDirectLink}`;\n    }\n    pdfAvailable = true;\n  }\n  \n  // ==================================================\n  // CONTACT INFO EXTRACTION\n  // ==================================================\n  \n  // Agency Contact (before \"Bahrain Tender Board\" section)\n  const agencyContactMatch = fullTenderDetails.match(/For further inquiries please contact on:\\s*([^\\n]+?)\\s*(\\d{8})/i);\n  const agencyContactName = agencyContactMatch ? agencyContactMatch[1].trim() : issuedBy;\n  const agencyContactPhone = agencyContactMatch ? `+973 ${agencyContactMatch[2].trim()}` : null;\n  \n  // Tender Board contacts\n  const allPhones = fullTenderDetails.match(/\\+?973[\\s\\d]{8,}/g) || [];\n  const tenderBoardPhones = allPhones.filter(p => !agencyContactPhone || !p.includes(agencyContactPhone.replace(/\\D/g, '')));\n  \n  const tenderBoardEmail = fullTenderDetails.match(/([a-z0-9._%+-]+@tenderboard\\.gov\\.bh)/i)?.[1] || null;\n  const poBox = fullTenderDetails.match(/P\\.O\\.\\s*Box\\s+(\\d+)/i)?.[1] || null;\n  \n  // ==================================================\n  // REQUIREMENTS FLAGS\n  // ==================================================\n  const requiresCommercialReg = /Commercial Registration Certificate|valid CR/i.test(fullTenderDetails);\n  const requiresBahranization = /Bahranization Certificate|employment percentages for Bahraini manpower/i.test(fullTenderDetails);\n  const smeEligible = /Small and Medium Enterprises.*10%|SMEs Classification Certificate/i.test(fullTenderDetails);\n  const registrationRequired = /register.*e-tendering system/i.test(fullTenderDetails);\n  \n  // ==================================================\n  // DATE PARSING TO ISO\n  // ==================================================\n  const parseDate = (dateStr) => {\n    if (!dateStr) return null;\n    try {\n      const months = {\n        'JAN': 0, 'FEB': 1, 'MAR': 2, 'APR': 3, 'MAY': 4, 'JUN': 5,\n        'JUL': 6, 'AUG': 7, 'SEP': 8, 'OCT': 9, 'NOV': 10, 'DEC': 11\n      };\n      const parts = dateStr.match(/(\\d{2})-([A-Z]{3})-(\\d{4})\\s+(\\d{2}):(\\d{2}):(\\d{2})/i);\n      if (parts) {\n        const [, day, month, year, hour, minute, second] = parts;\n        const date = new Date(year, months[month.toUpperCase()], day, hour, minute, second);\n        return date.toISOString();\n      }\n    } catch (e) {}\n    return dateStr;\n  };\n  \n  // ==================================================\n  // CALCULATE DAYS REMAINING\n  // ==================================================\n  const getDaysRemaining = (isoDate) => {\n    if (!isoDate) return null;\n    try {\n      const deadline = new Date(isoDate);\n      const today = new Date();\n      return Math.ceil((deadline - today) / (1000 * 60 * 60 * 24));\n    } catch (e) {\n      return null;\n    }\n  };\n  \n  const daysRemaining = getDaysRemaining(parseDate(emailData.closingDate));\n  \n  // ==================================================\n  // RETURN COMPLETE STRUCTURED DATA\n  // ==================================================\n  return {\n    json: {\n      // ===== CORE TENDER INFO =====\n      timestamp: emailData.timestamp || new Date().toISOString(),\n      tenderNumber: emailData.tenderNumber,\n      tenderTitle: emailData.tenderTitle,\n      paRefNumber: paRefNumber,\n      \n      // ===== ISSUING AUTHORITY =====\n      issuedBy: issuedBy,\n      internalExternal: internalExternal,\n      invitationMethod: invitationMethod,\n      \n      // ===== FINANCIAL =====\n      initialBond: initialBond,\n      tenderFees: tenderFees,\n      contractDuration: contractDuration,\n      bidValidity: bidValidity,\n      \n      // ===== DATES (Original Format) =====\n      salesStart: emailData.salesStart,\n      closingDate: emailData.closingDate,\n      publishDate: publishDate,\n      purchaseBefore: purchaseBefore,\n      openingDate: openingDate,\n      closingDateFromPage: closingDateFromPage,\n      \n      // ===== DATES (ISO Format for DB) =====\n      salesStartISO: parseDate(emailData.salesStart),\n      closingDateISO: parseDate(emailData.closingDate),\n      \n      // ===== CALCULATED FIELDS =====\n      daysRemaining: daysRemaining,\n      \n      // ===== CLASSIFICATIONS =====\n      classification: classification,\n      isAlternateBidAllowed: isAlternateBidAllowed,\n      \n      // ===== CONTENT =====\n      fullTenderDetails: fullTenderDetails,\n      tenderDescription: tenderDescription,\n      mandatoryCriteria: mandatoryCriteria,\n      \n      // ===== DOCUMENTS =====\n      pdfAvailable: pdfAvailable,\n      pdfDirectLink: pdfDirectLink,\n      \n      // ===== URLS =====\n      tenderUrl: emailData.tenderUrl,\n      eTenderingUrl: emailData.eTenderingUrl,\n      \n      // ===== CONTACT INFO =====\n      agencyContacName:  agencyContactName,\n       agencyContactPhone: agencyContactPhone,\n      \n      tenderBoardContact: {\n        email: tenderBoardEmail,\n        phones: tenderBoardPhones,\n        poBox: poBox ? `P.O. Box ${poBox}` : null\n      },\n      \n      // ===== REQUIREMENTS =====\n      requiresCommercialReg: requiresCommercialReg,\n      requiresBahranization: requiresBahranization,\n      smeEligible: smeEligible,\n      registrationRequired: registrationRequired,\n      \n      // ===== EMAIL DATA =====\n      emailSubject: emailData.emailSubject,\n      emailBody: emailData.emailBody,\n      \n      // ===== LEGACY FIELDS (for backward compatibility) =====\n      receivedDate: emailData.timestamp,\n      submissionDeadline: emailData.closingDate,\n      originalUrl: emailData.eTenderingUrl,\n      subject: emailData.emailSubject,\n      rawBody: emailData.emailBody\n    }\n  };\n});"
-      },
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        -5072,
-        2704
-      ],
-      "id": "2bb11985-4170-451e-b08d-89b800ca5dd6",
-      "name": "Code in JavaScript4",
-      "disabled": true
     },
     {
       "parameters": {
@@ -3313,7 +944,7 @@
           "parameters": [
             {
               "name": "id",
-              "value": "={{ $json.tenderNumber}}"
+              "value": "={{ $('Code6').item.json.tenderNumber }}"
             }
           ]
         },
@@ -3330,11 +961,11 @@
             },
             {
               "name": "Referer",
-              "value": "={{ $json.tenderUrl }}"
+              "value": "={{ $('Code6').item.json.tenderUrl }}"
             },
             {
               "name": "Origin",
-              "value": "https://www.tenderboard.gov.bh"
+              "value": "=https://{{ $('Code6').item.json.tenderUrl.extractDomain() }}"
             }
           ]
         },
@@ -3343,23 +974,23 @@
         "bodyParameters": {
           "parameters": [
             {
+              "name": "__VIEWSTATE",
+              "value": "={{$('Code in JavaScript1').item.json.__VIEWSTATE}}"
+            },
+            {
+              "name": "__VIEWSTATEGENERATOR",
+              "value": "={{ $('Code in JavaScript1').item.json.__VIEWSTATEGENERATOR }}"
+            },
+            {
+              "name": "__EVENTVALIDATION",
+              "value": "={{ $('Code in JavaScript1').item.json.__EVENTVALIDATION }}"
+            },
+            {
               "name": "__EVENTTARGET",
               "value": "ctl00$ctl00$cphBaseBody$CphInnerBody$lnkBtnDwnld"
             },
             {
               "name": "__EVENTARGUMENT"
-            },
-            {
-              "name": "__VIEWSTATE",
-              "value": "/wEPDwULLTE1OTIzOTIwNDgPZBYCZg9kFgJmD2QWAgIBD2QWBAIDD2QWBGYPFgIeBFRleHQF9yE8IS0tIFRvZ2dsZSBNZW51IC0gRm9yIE1vYmlsZSBEZXZpY2VzIC0tPjxsaT48c3Bhbj5BYm91dC...="
-            },
-            {
-              "name": "__VIEWSTATEGENERATOR",
-              "value": "2C09690D"
-            },
-            {
-              "name": "__EVENTVALIDATION",
-              "value": "/wEdAAVMKnr1QRUknyAI1ITEQSN33yh6sL/GJQBu2PY2F/eKypZjYraZJRkW4eXD6DssA9EXMGsLTEVXUkg/T1WtX8R8CG2HmUJOGDw8j4IypSdHnBtFVPvOkjNn/fvW8nWszFCBx1ge9LpyH9cnAFbeuLmv"
             }
           ]
         },
@@ -3367,7 +998,7 @@
           "response": {
             "response": {
               "responseFormat": "file",
-              "outputPropertyName": "tender_643_2025.pdf"
+              "outputPropertyName": "={{ $('Code in JavaScript1').item.json.tenderNumberSafe }}"
             }
           }
         }
@@ -3375,8 +1006,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        -1120,
-        2624
+        -1696,
+        2016
       ],
       "id": "8c843c99-7498-443c-b94d-41500906205e",
       "name": "HTTP Request2"
@@ -3392,8 +1023,8 @@
       "type": "n8n-nodes-base.s3",
       "typeVersion": 1,
       "position": [
-        -512,
-        2656
+        -1504,
+        2016
       ],
       "id": "e9c93dd9-4f66-46ae-8341-6e926076a9ba",
       "name": "Upload a file",
@@ -3403,20 +1034,6 @@
           "name": "Bymb.bh"
         }
       }
-    },
-    {
-      "parameters": {
-        "url": "https://n8n.bymb.bh/webhook-test/zohomailinfo",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.3,
-      "position": [
-        -4496,
-        1232
-      ],
-      "id": "bc45f6d5-3f6f-48dc-956d-6985f9213025",
-      "name": "HTTP Request3"
     },
     {
       "parameters": {
@@ -3494,6 +1111,19 @@
       ],
       "id": "cba59b50-52e1-4099-b40a-b08ee7d0614a",
       "name": "HTTP Request4"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get HTML - handle different response structures\nconst response = $input.item.json;\nconst html = response.data || response.body || (typeof response === 'string' ? response : JSON.stringify(response));\n\nif (!html || typeof html !== 'string') {\n  return {\n    json: {\n      error: \"No HTML content found\",\n      responseKeys: Object.keys(response)\n    }\n  };\n}\n\nconst viewstate = html.match(/id=\"__VIEWSTATE\"\\s+value=\"([^\"]*)\"/)?.[1];\nconst eventval = html.match(/id=\"__EVENTVALIDATION\"\\s+value=\"([^\"]*)\"/)?.[1];\nconst viewgen = html.match(/id=\"__VIEWSTATEGENERATOR\"\\s+value=\"([^\"]*)\"/)?.[1];\n\n// Get tender info from upstream\nconst tenderNumber = $('Code6').item.json.tenderNumber;\nconst tenderUrl = $('Code6').item.json.tenderUrl;\n\n// Sanitize tender number for filename (replace / with -)\nconst tenderNumberSafe = tenderNumber ? tenderNumber.replace(/\\//g, '-') : null;\n\nreturn {\n  json: {\n    __VIEWSTATE: viewstate || null,\n    __EVENTVALIDATION: eventval || null,\n    __VIEWSTATEGENERATOR: viewgen || null,\n    tenderUrl: tenderUrl,\n    tenderNumber: tenderNumber,           // Original: \"10/2025/BP\"\n    tenderNumberSafe: tenderNumberSafe,   // Safe: \"10-2025-BP\"\n    tokensFound: !!(viewstate && eventval && viewgen)\n  }\n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1872,
+        2016
+      ],
+      "id": "5914bb65-ef4a-4fdd-83a3-52b70ceafd95",
+      "name": "Code in JavaScript1"
     }
   ],
   "pinData": {
@@ -3562,22 +1192,6 @@
     ]
   },
   "connections": {
-    "AI Agent": {
-      "main": [
-        []
-      ]
-    },
-    "Code1": {
-      "main": [
-        [
-          {
-            "node": "HTTP Request1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Schedule Trigger": {
       "main": [
         [
@@ -3594,133 +1208,11 @@
         []
       ]
     },
-    "Google Gemini Chat Model": {
-      "ai_languageModel": [
-        [
-          {
-            "node": "AI Agent",
-            "type": "ai_languageModel",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Gmail Trigger": {
-      "main": [
-        [
-          {
-            "node": "If1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Filter": {
-      "main": [
-        [
-          {
-            "node": "AI Agent",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "HTTP Request1": {
-      "main": [
-        [
-          {
-            "node": "HTML",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "HTML": {
-      "main": [
-        [
-          {
-            "node": "Code",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Edit Fields": {
-      "main": [
-        [
-          {
-            "node": "Insert row1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Code": {
-      "main": [
-        [
-          {
-            "node": "Edit Fields",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Simple Memory": {
-      "ai_memory": [
-        [
-          {
-            "node": "AI Agent",
-            "type": "ai_memory",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Get row(s)": {
       "main": [
         [
           {
             "node": "Filter1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "If1": {
-      "main": [
-        [
-          {
-            "node": "Code1",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Insert row2",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "HTML1": {
-      "main": [
-        []
-      ]
-    },
-    "Code3": {
-      "main": [
-        [
-          {
-            "node": "Edit Fields2",
             "type": "main",
             "index": 0
           }
@@ -3738,17 +1230,6 @@
         ]
       ]
     },
-    "Edit Fields2": {
-      "main": [
-        [
-          {
-            "node": "Insert row4",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Filter1": {
       "main": [
         [
@@ -3758,38 +1239,6 @@
             "index": 0
           }
         ]
-      ]
-    },
-    "Code in JavaScript2": {
-      "main": [
-        []
-      ]
-    },
-    "Code4": {
-      "main": [
-        [
-          {
-            "node": "Insert row6",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "HTML4": {
-      "main": [
-        [
-          {
-            "node": "Code4",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Insert row4": {
-      "main": [
-        []
       ]
     },
     "If": {
@@ -3828,11 +1277,6 @@
             "node": "HTTP Request",
             "type": "main",
             "index": 0
-          },
-          {
-            "node": "HTTP Request2",
-            "type": "main",
-            "index": 0
           }
         ]
       ]
@@ -3842,6 +1286,11 @@
         [
           {
             "node": "HTML5",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Code in JavaScript1",
             "type": "main",
             "index": 0
           }
@@ -3881,11 +1330,6 @@
         ]
       ]
     },
-    "Code in JavaScript4": {
-      "main": [
-        []
-      ]
-    },
     "HTTP Request2": {
       "main": [
         [
@@ -3901,6 +1345,17 @@
       "main": [
         []
       ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": true,
@@ -3910,7 +1365,7 @@
     "saveExecutionProgress": true,
     "callerPolicy": "workflowsFromSameOwner"
   },
-  "versionId": "40270e85-ac91-4c66-b67a-01a83a87b31b",
+  "versionId": "810b5210-0c97-4b8d-a3d0-796d121e90a8",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "dfa55baeaed6d16b04eea52bb223e312100efda8320b46d3fccb202a85efb890"
